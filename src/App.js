@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+import { useTranslation } from "react-i18next";
 import './App.css';
 import { Router } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -24,11 +24,11 @@ function App() {
     }
   }, []);
 
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   return (
     <>
-      <Router  />
+      {/* <Router  /> */}
+      <div className="App">Denish</div>
     </>
   );
 }

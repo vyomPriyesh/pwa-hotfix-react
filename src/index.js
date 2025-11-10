@@ -6,6 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import common_it from "./translations/it/common.json";
 import common_en from "./translations/en/common.json";
+import i18next from "i18next";
+import { I18nextProvider } from "react-i18next";
 
 const lan = localStorage.getItem("language") || "en";
 i18next.init({
