@@ -28,9 +28,9 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <I18nextProvider i18n={i18next}>
     {/* <Provider store={store}> */}
-      <BrowserRouter basename={process.env.REACT_APP_HOME_PAGE}>
-        <App />
-      </BrowserRouter>
+    <BrowserRouter basename={import.meta.env.VITE_HOME_PAGE || "/"}>
+      <App />
+    </BrowserRouter>
     {/* </Provider> */}
   </I18nextProvider>
 );
