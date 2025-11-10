@@ -3,7 +3,7 @@ import serverCall from "../serverCall";
 
 const login = (body) => {
   try {
-    const response = serverCall.post(`auth/admin/login`, body);
+    const response = serverCall.post(`login`, body);
 
     const data = get(response, "data", null);
 

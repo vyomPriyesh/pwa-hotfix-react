@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { get } from "lodash";
 
 export const login = createAsyncThunk(
-  "/auth/login",
+  "login",
   async (requestObj, thunkAPI) => {
     try {
       const response = await AuthService.login(requestObj);
