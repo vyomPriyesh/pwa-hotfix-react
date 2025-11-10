@@ -1,0 +1,86 @@
+{
+  "lang": {
+    "english": "અંગ્રેજી",
+    "hindi": "હિન્દી",
+    "gujarati": "ગુજરાતી"
+  },
+  "messages": {
+    "email": "ઈમેલ માન્ય ઈમેલ હોવી જોઈએ",
+    "emailRequired": "ઈમેલ જરૂરી છે",
+    "password": "પાસવર્ડ ઓછામાં ઓછા 8 અક્ષરનો હોવો જોઈએ",
+    "passwordMin": "પાસવર્ડ ઓછામાં ઓછા 8 અક્ષરનો હોવો જોઈએ",
+    "passwordRequired": "પાસવર્ડ જરૂરી છે",
+    "passwordUppercase": "પાસવર્ડમાં ઓછામાં ઓછો એક મોટો અક્ષર હોવો જોઈએ",
+    "passwordLowercase": "પાસવર્ડમાં ઓછામાં ઓછો એક નાનો અક્ષર હોવો જોઈએ",
+    "passwordNumber": "પાસવર્ડમાં ઓછામાં ઓછો એક નંબર હોવો જોઈએ",
+    "passwordSpecialChar": "પાસવર્ડમાં ઓછામાં ઓછો એક ખાસ ચિહ્ન હોવો જોઈએ",
+    "loginSuccess": "લોગિન સફળ થયું!",
+    "somethingWentWrong": "કઈક ખોટું થયું"
+  },
+  "sidebar": {
+    "dashboard": "ડેશબોર્ડ",
+    "master": "માસ્ટર",
+    "user": "વપરાશકર્તા",
+    "party": "પાર્ટી",
+    "category": "શ્રેણી"
+  },
+  "auth": {
+    "signInToYourAccount": "તમારા ખાતામાં સાઇન ઇન કરો",
+    "forgotPassword": "પાસવર્ડ ભૂલી ગયા છો?",
+    "rememberMe": "મને યાદ રાખો",
+    "signIn": "સાઇન ઇન કરો",
+    "googleLogin": "Google સાથે ચાલુ રાખો",
+    "appleLogin": "Apple સાથે ચાલુ રાખો"
+  },
+  "dashboard": {
+    "totalUser": "કુલ વપરાશકર્તા",
+    "totalPost": "કુલ પોસ્ટ",
+    "totalComment": "કુલ ટિપ્પણી",
+    "all": "બધા",
+    "day": "દિવસ",
+    "week": "અઠવાડિયું",
+    "month": "મહિનો"
+  },
+  "users": {
+    "userList": "વપરાશકર્તા યાદી",
+    "name": "નામ",
+    "email": "ઈમેલ",
+    "rank": "ક્રમ",
+    "status": "સ્થિતિ",
+    "no": "ક્રમ નંબર",
+    "image": "છબી",
+    "badge": "બેજ",
+    "block": "બ્લોક કરો",
+    "unBlock": "અનબ્લોક કરો",
+    "editBadge": "બેજ સંપાદિત કરો",
+    "update": "અપડેટ કરો",
+    "noUsersFound": "કોઈ વપરાશકર્તા મળ્યા નથી.",
+    "perPage": "દર પેજ પર",
+    "goTo": "જાઓ"
+  },
+  "deleteDialog": {
+    "areYouSure": "શું તમે ખાતરી કરો છો?",
+    "areYouSureDelete": "શું તમે ખરેખર આ આઇટમ કાઢી નાખવા માંગો છો?"
+  },
+  "footer": {
+    "copyright": "Shadcn એડમિન સર્વ હક્ક સુરક્ષિત."
+  },
+  "usernamePlaceholder": "તમારું વપરાશકર્તા નામ દાખલ કરો",
+  "passwordPlaceholder": "તમારો પાસવર્ડ દાખલ કરો",
+  "emailPlaceholder": "તમારું ઈમેલ દાખલ કરો",
+  "searchPlaceholder": "શોધો...",
+  "openDialog": "ડાયલોગ ખોલો",
+  "closeDialog": "ડાયલોગ બંધ કરો",
+  "logout": "લૉગઆઉટ કરો",
+  "delete": "કાઢી નાખો",
+  "username": "વપરાશકર્તા નામ",
+  "close": "બંધ કરો",
+  "password": "પાસવર્ડ",
+  "email": "ઈમેલ",
+  "search": "શોધો",
+  "submit": "સબમિટ કરો",
+  "cancel": "રદ કરો",
+  "previous": "પાછળનું",
+  "next": "આગલું",
+  "confirm": "ખાતરી કરો"
+}

@@ -25,6 +25,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export function CollapseMenuButton({
   icon: Icon,
@@ -35,6 +37,7 @@ export function CollapseMenuButton({
 }) {
   const isSubmenuActive = submenus.some((submenu) => submenu.active);
   const [isCollapsed, setIsCollapsed] = useState(isSubmenuActive);
+  const { t } = useTranslation("common");
 
   return isOpen ? (
     <Collapsible
@@ -63,7 +66,7 @@ export function CollapseMenuButton({
                     : "-translate-x-96 opacity-0"
                 )}
               >
-                {label}
+                {t(`sidebar.${label}`)}
               </p>
             </div>
             <div
@@ -90,7 +93,7 @@ export function CollapseMenuButton({
             className="w-full justify-start h-10 mb-1"
             asChild
           >
-            <a href={href}>
+            <Link to={href}>
               <span className="mr-4 ml-2">
                 <Icon size={18} />
               </span>
@@ -102,9 +105,9 @@ export function CollapseMenuButton({
                     : "-translate-x-96 opacity-0"
                 )}
               >
-                {label}
+                {t(`sidebar.${label}`)}
               </p>
-            </a>
+            </Link>
           </Button>
         ))}
       </CollapsibleContent>

@@ -45,14 +45,15 @@ export function UserNav() {
       </div>
 
       <Select onValueChange={handleLanguageChange} defaultValue={i18n.language}>
-        <SelectTrigger className="w-[100px]">
-          <SelectValue placeholder="Language" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="en">English</SelectItem>
-          <SelectItem value="it">Italian</SelectItem>
-        </SelectContent>
-      </Select>
+  <SelectTrigger className="w-[120px]">
+    <SelectValue placeholder="Language" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="en">{t("lang.english")}</SelectItem>
+    <SelectItem value="hi">{t("lang.hindi")}</SelectItem>
+    <SelectItem value="gu">{t("lang.gujarati")}</SelectItem>
+  </SelectContent>
+</Select>
     </>
     // <DropdownMenu>
     //   <DropdownMenuTrigger asChild>

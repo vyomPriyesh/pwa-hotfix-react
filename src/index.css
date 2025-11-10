@@ -90,13 +90,13 @@ input[type="number"] {
   @apply text-20 tab:text-36 font-semibold;
 }
 .h4-bold {
-  @apply text-20 tab:text-24 font-semibold;
+  @apply text-base tab:text-24 font-semibold;
 }
 .h5-bold {
   @apply text-sm tab:text-20 font-semibold;
 }
 .h6-bold {
-  @apply text-base font-semibold;
+  @apply text-sm font-semibold;
 }
 
 /* Heading tag Medium */

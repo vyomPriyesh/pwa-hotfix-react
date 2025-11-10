@@ -24,7 +24,7 @@ export default function AdminPanelLayout({ children }) {
         )}
       >
         <Navbar />
-        <div className="pt-8 pb-8 px-4 sm:px-8">
+        <div className="p-4 lg:p-6">
           <Outlet />
         </div>
       </main>
