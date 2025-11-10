@@ -15,9 +15,10 @@ const buttonVariants = cva(
         outline:
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 text-blue",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 text-primary",
+        ghost: "hover:bg-accent hover:text-primary text-primary/60",
         link: "text-primary underline-offset-4 hover:underline",
+        sidebarActive: "bg-secondary text-secondary-foreground w-full ",
       },
       size: {
         default: "h-10 px-4 py-2",

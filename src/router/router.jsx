@@ -58,7 +58,15 @@ const routes = (isLoggedIn) => [
       },
       {
         element: <User />,
-        path: "/users",
+        path: "/master/user",
+      },
+      {
+        element: <User />,
+        path: "/master/party",
+      },
+      {
+        element: <User />,
+        path: "/master/category",
       },
     ],
   },

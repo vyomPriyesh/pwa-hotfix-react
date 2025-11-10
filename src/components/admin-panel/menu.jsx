@@ -124,6 +124,8 @@ export function Menu({ isOpen }) {
             </li>
           ))}
         </ul>
+
+        {/* Logout */}
         <div className="w-full grow flex items-end px-4">
           <CommonButton
             onClick={() => handleLogout()}
