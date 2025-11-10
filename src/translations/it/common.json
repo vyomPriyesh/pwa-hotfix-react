@@ -1,0 +1,78 @@
+{
+  "messages": {
+    "email": "Email deve essere un indirizzo email valido",
+    "emailRequired": "Email è obbligatoria",
+    "password": "Password deve essere almeno 8 caratteri",
+    "passwordMin": "Password deve essere almeno 8 caratteri",
+    "passwordUppercase": "Password deve contenere almeno una lettera maiuscola",
+    "passwordLowercase": "Password deve contenere almeno una lettera minuscola",
+    "passwordNumber": "Password deve contenere almeno un numero",
+    "passwordSpecialChar": "Password deve contenere almeno un carattere speciale",
+    "passwordRequired": "Password è obbligatoria",
+    "loginSuccess": "Login effettuato con successo!",
+    "somethingWentWrong": "Qualcosa è andato storto"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "users": "Utenti"
+  },
+  "dashboard": {
+    "totalUser": "Totale Utenti",
+    "totalPost": "Totale Post",
+    "totalComment": "Totale Commenti",
+    "all": "Tutti",
+    "day": "Giorno",
+    "week": "Settimana",
+    "month": "Mese"
+  },
+  "users": {
+    "userList": "Lista Utenti",
+    "name": "Nome",
+    "email": "Email",
+    "rank": "Rango",
+    "status": "Stato",
+    "no": "No",
+    "image": "Immagine",
+    "badge": "Badge",
+    "block": "Blocca",
+    "unBlock": "Sblocca",
+    "editBadge": "Modifica Badge",
+    "update": "Aggiorna",
+    "noUsersFound": "Nessun utente trovato.",
+    "perPage": "Per Pagina",
+    "goTo": "Vai a"
+  },
+  "auth": {
+    "signInToYourAccount": "Accedi al tuo account",
+    "forgotPassword": "Hai dimenticato la password?",
+    "rememberMe": "Ricordami",
+    "signIn": "Accedi",
+    "googleLogin": "Continua con Google",
+    "appleLogin": "Continua con Apple"
+  },
+  "deleteDialog": {
+    "areYouSure": "Sei sicuro?",
+    "areYouSureDelete": "Sei sicuro di voler eliminare questo elemento?"
+  },
+  "footer": {
+    "copyright": "Shadcn Admin Tutti i diritti riservati."
+  },
+  "usernamePlaceholder": "Inserisci il tuo nome utente",
+  "passwordPlaceholder": "Inserisci la tua password",
+  "emailPlaceholder": "Inserisci la tua email",
+  "searchPlaceholder": "Cerca...",
+  "openDialog": "Apri Dialog",
+  "closeDialog": "Chiudi Dialog",
+  "delete": "Elimina",
+  "logout": "Esci",
+  "username": "Nome utente",
+  "close": "Chiudi",
+  "password": "Password",
+  "email": "E-mail",
+  "search": "Cerca",
+  "submit": "Invia",
+  "cancel": "Cancella",
+  "previous": "Precedente",
+  "next": "Successivo",
+  "confirm": "Conferma"
+}

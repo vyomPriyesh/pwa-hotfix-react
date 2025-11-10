@@ -1,0 +1,41 @@
+"use client";
+
+import { Sidebar } from "./sidebar";
+import { Footer } from "./footer";
+import { useSidebarToggle } from "../../hooks/use-sidebar-toggle";
+import { useStore } from "zustand";
+import { cn } from "../../lib/utils";
+import { Outlet } from "react-router-dom";
+import { Navbar } from "./navbar";
+// import { Navbar } from "./navbar";
+
+export default function AdminPanelLayout({ children }) {
+  const sidebar = useStore(useSidebarToggle, (state) => state);
+
+  if (!sidebar) return null;
+
+  return (
+    <>
+      <Sidebar />
+      <main
+        className={cn(
+          "min-h-[calc(100vh_-_56px)] bg-zinc-50 dark:bg-zinc-900 transition-[margin-left] ease-in-out duration-300",
+          sidebar?.isOpen === false ? "lg:ml-[90px]" : "lg:ml-72"
+        )}
+      >
+        <Navbar />
+        <div className="pt-8 pb-8 px-4 sm:px-8">
+          <Outlet />
+        </div>
+      </main>
+      <footer
+        className={cn(
+          "transition-[margin-left] ease-in-out duration-300",
+          sidebar?.isOpen === false ? "lg:ml-[90px]" : "lg:ml-72"
+        )}
+      >
+        <Footer />
+      </footer>
+    </>
+  );
+}

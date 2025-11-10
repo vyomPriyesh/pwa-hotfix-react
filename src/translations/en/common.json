@@ -1,0 +1,78 @@
+{
+  "messages": {
+    "email": "Email must be a valid email",
+    "emailRequired": "Email is required",
+    "password": "Password must be at least 8 characters",
+    "passwordMin": "Password must be at least 8 characters",
+    "passwordRequired": "Password is required",
+    "passwordUppercase": "Password must contain at least one uppercase letter",
+    "passwordLowercase": "Password must contain at least one lowercase letter",
+    "passwordNumber": "Password must contain at least one number",
+    "passwordSpecialChar": "Password must contain at least one special character",
+    "loginSuccess": "Login successful!",
+    "somethingWentWrong": "Something went wrong"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "users": "Users"
+  },
+  "auth": {
+    "signInToYourAccount": "Sign in to your account",
+    "forgotPassword": "Forgot your password?",
+    "rememberMe": "Remember me",
+    "signIn": "Sign in",
+    "googleLogin": "Continue with Google",
+    "appleLogin": "Continue with Apple"
+  },
+  "dashboard": {
+    "totalUser": "Total User",
+    "totalPost": "Total Post",
+    "totalComment": "Total Comment",
+    "all": "All",
+    "day": "Day",
+    "week": "Week",
+    "month": "Month"
+  },
+  "users": {
+    "userList": "User List",
+    "name": "Name",
+    "email": "Email",
+    "rank": "Rank",
+    "status": "Status",
+    "no": "No",
+    "image": "Image",
+    "badge": "Badge",
+    "block": "Block",
+    "unBlock": "Unblock",
+    "editBadge": "Edit Badge",
+    "update": "Update",
+    "noUsersFound": "No users found.",
+    "perPage": "Per Page",
+    "goTo": "Go to"
+  },
+  "deleteDialog": {
+    "areYouSure": "Are you sure?",
+    "areYouSureDelete": "Are you sure you want to delete this item?"
+  },
+  "footer": {
+    "copyright": "Shadcn Admin All rights reserved."
+  },
+  "usernamePlaceholder": "Enter your username",
+  "passwordPlaceholder": "Enter your password",
+  "emailPlaceholder": "Enter your email",
+  "searchPlaceholder": "Search...",
+  "openDialog": "Open Dialog",
+  "closeDialog": "Close Dialog",
+  "logout": "Logout",
+  "delete": "Delete",
+  "username": "Username",
+  "close": "Close",
+  "password": "Password",
+  "email": "Email",
+  "search": "Search",
+  "submit": "Submit",
+  "cancel": "Cancel",
+  "previous": "Previous",
+  "next": "Next",
+  "confirm": "Confirm"
+}
