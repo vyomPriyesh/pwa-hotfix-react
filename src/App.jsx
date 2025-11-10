@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
-import './App.css';
-import { Router } from 'react-router-dom';
-import { useEffect } from 'react';
+import "./App.css";
+import Router from "./router/router";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 function App() {
-
   const { t, i18n } = useTranslation("common");
 
   useEffect(() => {
@@ -24,11 +24,11 @@ function App() {
     }
   }, []);
 
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   return (
     <>
-      {/* <Router  /> */}
-      <div className="App">Denish</div>
+      <Router isLoggedIn={isLoggedIn} />
     </>
   );
 }

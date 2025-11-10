@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Dot } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, Dot, LucideIcon } from "lucide-react";
 
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
@@ -8,6 +8,7 @@ import { DropdownMenuArrow } from "@radix-ui/react-dropdown-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -34,36 +35,6 @@ export function CollapseMenuButton({
 }) {
   const isSubmenuActive = submenus.some((submenu) => submenu.active);
   const [isCollapsed, setIsCollapsed] = useState(isSubmenuActive);
-
-  // NEW: measure content height and expose it as CSS var
-  const contentRef = useRef(null);
-  const [contentHeight, setContentHeight] = useState(0);
-
-  useEffect(() => {
-    const el = contentRef.current;
-    if (!el) return;
-
-    const update = () => {
-      // scrollHeight gives full content height regardless of current CSS height
-      setContentHeight(el.scrollHeight);
-    };
-
-    update(); // initial measurement
-
-    let ro;
-    if (typeof ResizeObserver !== "undefined") {
-      ro = new ResizeObserver(update);
-      ro.observe(el);
-    } else {
-      // fallback for very old browsers
-      window.addEventListener("resize", update);
-    }
-
-    return () => {
-      if (ro) ro.disconnect();
-      else window.removeEventListener("resize", update);
-    };
-  }, [submenus]); // re-measure if submenu items change
 
   return isOpen ? (
     <Collapsible
@@ -111,30 +82,31 @@ export function CollapseMenuButton({
           </div>
         </Button>
       </CollapsibleTrigger>
-      <CollapsibleContent
-        className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
-        style={{ ["--radix-collapsible-content-height"]: `${contentHeight}px` }}
-      >
-        {/* Put a wrapper that we measure */}
-        <div ref={contentRef} className="pt-1 pb-1">
-          {submenus.map(({ href, label, active }, index) => (
-            <Button
-              key={index}
-              variant={active ? "secondary" : "ghost"}
-              className="w-full justify-start h-10 mb-1"
-              asChild
-            >
-              <a href={href}>
-                <span className="mr-4 ml-2">
-                  <Dot size={18} />
-                </span>
-                <p className={cn("max-w-[170px] truncate", isOpen ? "translate-x-0 opacity-100" : "-translate-x-96 opacity-0")}>
-                  {label}
-                </p>
-              </a>
-            </Button>
-          ))}
-        </div>
+      <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+        {submenus.map(({ href, label, active }, index) => (
+          <Button
+            key={index}
+            variant={active ? "secondary" : "ghost"}
+            className="w-full justify-start h-10 mb-1"
+            asChild
+          >
+            <a href={href}>
+              <span className="mr-4 ml-2">
+                <Dot size={18} />
+              </span>
+              <p
+                className={cn(
+                  "max-w-[170px] truncate",
+                  isOpen
+                    ? "translate-x-0 opacity-100"
+                    : "-translate-x-96 opacity-0"
+                )}
+              >
+                {label}
+              </p>
+            </a>
+          </Button>
+        ))}
       </CollapsibleContent>
     </Collapsible>
   ) : (

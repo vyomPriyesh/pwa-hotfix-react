@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
-import { SidebarToggle } from "./sidebar-toggle";
+// import { SidebarToggle } from "./sidebar-toggle";
 import { Menu } from "./menu";
 import { useSidebarToggle } from "../../hooks/use-sidebar-toggle";
 import { useStore } from "zustand";
@@ -19,7 +19,7 @@ export function Sidebar() {
         sidebar?.isOpen === false ? "w-[90px]" : "w-72"
       )}
     >
-      <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} />
+      {/* <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} /> */}
       <div className="relative h-full flex flex-col py-4 overflow-y-auto shadow-md dark:shadow-zinc-800">
         <Button
           className={cn(

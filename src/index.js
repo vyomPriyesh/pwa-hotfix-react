@@ -4,6 +4,8 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "./store";
 import common_it from "./translations/it/common.json";
 import common_en from "./translations/en/common.json";
 import i18next from "i18next";
@@ -27,11 +29,11 @@ i18next.init({
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <I18nextProvider i18n={i18next}>
-    {/* <Provider store={store}> */}
-    <BrowserRouter basename={import.meta.env.VITE_HOME_PAGE || "/"}>
-      <App />
-    </BrowserRouter>
-    {/* </Provider> */}
+    <Provider store={store}>
+      <BrowserRouter basename={process.env.REACT_APP_HOME_PAGE}>
+        <App />
+      </BrowserRouter>
+    </Provider>
   </I18nextProvider>
 );
 
