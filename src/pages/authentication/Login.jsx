@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 import Toaster from "../../components/common/toaster";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { setLoggedIn } from "../../store/slice/auth";
 import { useDispatch } from "react-redux";
 import { toastSuccess } from "../../common/toastNotification";
 import { useTranslation } from "react-i18next";
@@ -37,15 +36,6 @@ const Login = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     // setLoading(true);
     try {
-      // const response = await dispatch(login(values)).unwrap();
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      localStorage.setItem("isLoggedIn", "true");
-      dispatch(setLoggedIn(true));
-      if (values.rememberMe) {
-        localStorage.setItem("rememberedEmail", values.email);
-      }
 
       toastSuccess(t("messages.loginSuccess"));
       navigate("/");

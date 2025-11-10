@@ -45,11 +45,11 @@ export const PublicRoute = ({ children }) => {
 const routes = (isLoggedIn) => [
   {
     path: "/login",
-    element: !isLoggedIn ? <Login /> : <Navigate to="/" />,
+    element: <Login />,
   },
   {
     path: "/",
-    element: isLoggedIn ? <AdminPanelLayout /> : <Navigate to="/login" />,
+    element: <AdminPanelLayout />,
     children: [
       {
         element: <Dashboard />,
