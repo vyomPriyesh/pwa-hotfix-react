@@ -6,8 +6,8 @@ import {
 } from "lucide-react"
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
 
-import { cn } from "../../lib/utils"
-import { Button, buttonVariants } from "../../components/ui/button"
+import { cn } from "@/lib/utils"
+import { Button, buttonVariants } from "@/components/ui/button"
 
 function Calendar({
   className,
@@ -46,12 +46,12 @@ function Calendar({
         ),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) aria-disabled:opacity-50 p-0 select-none w-8 h-8 border-border border [&_svg]:size-5",
+          "size-(--cell-size) aria-disabled:opacity-50 p-0 select-none",
           defaultClassNames.button_previous
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) aria-disabled:opacity-50 p-0 select-none w-8 h-8 border-border border [&_svg]:size-5",
+          "size-(--cell-size) aria-disabled:opacity-50 p-0 select-none",
           defaultClassNames.button_next
         ),
         month_caption: cn(
@@ -83,7 +83,7 @@ function Calendar({
           defaultClassNames.week_number
         ),
         day: cn(
-          "relative w-full h-full p-0 text-center [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none",
+          "relative !w-10 !h-10 p-0 text-center [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none",
           props.showWeekNumber
             ? "[&:nth-child(2)[data-selected=true]_button]:rounded-l-md"
             : "[&:first-child[data-selected=true]_button]:rounded-l-md",
@@ -164,10 +164,10 @@ function CalendarDayButton({
       data-range-start={modifiers.range_start}
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
-       className={cn(
-        "text-primary lg:!w-10 !w-10 lg:!h-10 !h-10 flex aspect-square size-auto min-w-[var(--cell-size)] flex-col gap-1 leading-none font-normal [&>span]:text-xs [&>span]:opacity-70",
+      className={cn(
+        "text-white !w-10 !h-10 flex aspect-square size-auto min-w-[var(--cell-size)] flex-col gap-1 leading-none font-normal [&>span]:text-xs [&>span]:opacity-70",
         "data-[range-middle=true]:text-white data-[range-middle=true]:bg-primary data-[range-middle=true]:!rounded-none",
-        "data-[selected-single=true]:!bg-primary data-[selected-single=true]:text-white",
+        "data-[selected-single=true]:!bg-primary_gradient data-[selected-single=true]:text-white",
         "data-[range-start=true]:bg-primary_gradient data-[range-start=true]:text-white data-[range-start=true]:!rounded-l-full",
         "data-[range-end=true]:bg-primary_gradient data-[range-end=true]:text-white data-[range-end=true]:!rounded-full",
         "group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50 dark:hover:text-accent-foreground group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px]",
