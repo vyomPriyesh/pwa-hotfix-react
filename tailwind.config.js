@@ -59,15 +59,8 @@ module.exports = {
         40: "40px",
         56: "56px",
       },
-      backgroundImage: {
-        cardGradient:"linear-gradient(145deg, #e2e8ec, #ffffff)",
-        cardGradientDark:"linear-gradient(145deg, #1e2024, #23272b)"
-      },
       boxShadow: {
         user_card: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
-        profilesTwo:"5px 5px 15px #D1D9E6, -5px -5px 15px #ffffff",
-        profilesTwoDark:"10px 10px 19px #1c1e22, -10px -10px 19px #262a2e",
-        profiles:"5px 5px 15px #D1D9E6, -5px -5px 15px #ffffff"
       },
       keyframes: {
         "accordion-down": {

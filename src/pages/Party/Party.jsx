@@ -32,10 +32,11 @@ import CommonPagination from "../../components/widgets/common_pagination";
 import { CommonTextField } from "../../components/widgets/common_textField";
 import CommonButton from "../../components/widgets/common_button";
 import Delete from "./Delete";
-import EditUser from "./EditUser";
+import EditUser from "./EditParty";
 import { CircleFadingPlus, MapPin, Phone, Plus } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Separator } from "../../components/ui/separator";
+import EditParty from "./EditParty";
 
 // Static user data
 const staticUsers = [
@@ -215,15 +216,17 @@ const Party = () => {
             userData.map((item, index) => (
               <Card
                 key={item._id || index}
-                className="p-4 bg-cardGradient dark:bg-cardGradientDark !shadow-profilesTwo dark:shadow-profilesTwoDark border-0"
+                className="p-4"
               >
-                <div className="flex sm:flex-col items-center gap-4 overflow-hidden">
-                  <div className="h-10 w-10 sm:h-16 sm:w-16 rounded-full flex items-center justify-center shadow-profiles overflow-hidden">
-                    <span className="h5-bold !font-bold">PM</span>
-                  </div>
-                  <div className="sm:text-center grid gap-1">
-                    <h4 className="h5-bold">{item.company}</h4>
-                    <p className="p-regular text-primary/70">{item.name}</p>
+                <div className="grid gap-4 overflow-hidden">
+                  <div className="flex sm:flex-col items-center gap-4">
+                    <div className="h-10 w-10 sm:h-16 sm:w-16 rounded-full border border-border flex items-center justify-center">
+                      <span className="h5-bold !font-bold">PM</span>
+                    </div>
+                    <div className="sm:text-center grid gap-1">
+                      <h4 className="h5-bold">{item.company}</h4>
+                      <p className="p-regular text-primary/70">{item.name}</p>
+                    </div>
                   </div>
                   <Separator />
                   <div className="grid grid-cols-[97.5px,160px] gap-3">
@@ -269,7 +272,7 @@ const Party = () => {
         setIsOpen={setIsOpen}
         isDelete={isOpen}
       />
-      <EditUser
+      <EditParty
         isOpen={isOpen === "edit"}
         setIsOpen={setIsOpen}
         isEdit={isOpen}

@@ -62,6 +62,17 @@
     "perPage": "Per Page",
     "goTo": "Go to"
   },
+  "party": {
+    "company": "Company Name",
+    "name": "Contact Person Name",
+    "mobile": "Mobile",
+    "address": "Address",
+    "gstin": "GST number",
+    "pancard": "PAN Card",
+    "openingBalance": "Opening Balance",
+    "editBadge": "Edit Party",
+    "update": "Update"
+  },
 
   "deleteDialog": {
     "areYouSure": "Are you sure?",
@@ -73,6 +84,10 @@
   },
   
   "usernamePlaceholder": "Enter your name",
+  "contactPersonPlaceholder": "Enter Contact Person Name",
+  "companyPlaceholder": "Enter company name",
+  "pancardPlaceholder": "Enter PAN card number",
+  "gstPlaceholder": "Enter GST number",
   "passwordPlaceholder": "Enter your password",
   "emailPlaceholder": "Enter your email",
   "mobilePlaceholder": "Enter your mobile number",
@@ -80,6 +95,7 @@
   "selectRolePlaceholder": "Select Role",
   "selectWorkTypePlaceholder": "Select Work Type",
   "searchPlaceholder": "Search...",
+  "addressPlaceholder": "Enter your address",
   "openDialog": "Open Dialog",
   "closeDialog": "Close Dialog",
   "logout": "Logout",
