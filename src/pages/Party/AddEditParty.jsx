@@ -10,17 +10,18 @@ import * as Yup from "yup";
 import masterService from "../../service/master.service";
 import { Toaster } from "../../components/ui/toaster";
 
-const AddEditParty = ({ user, isOpen, setIsOpen }) => {
+const AddEditParty = ({ user, isOpen, setIsOpen, selectedData = "" }) => {
   const { t } = useTranslation("common");
+  const isEdit = !!selectedData
 
   const initialValues = {
-    name: "",
-    contact_person: "",
-    email: "",
-    mobile: "",
-    address: "",
-    gst: "",
-    pancard: ""
+    name: selectedData?.name || "",
+    contact_person: selectedData?.contact_person || "",
+    email: selectedData?.email || "",
+    mobile: selectedData?.mobile || "",
+    address: selectedData?.address || "",
+    gst: selectedData?.gst || "",
+    pancard: selectedData?.pancard || ""
   };
 
   const validationSchema = Yup.object({
@@ -61,7 +62,11 @@ const AddEditParty = ({ user, isOpen, setIsOpen }) => {
         pancard: values?.pancard
       }
 
-      const response = await masterService.addParty(payload)
+      if (isEdit) {
+        await masterService.updateParty(selectedData?._id, payload)
+      } else {
+        await masterService.addParty(payload)
+      }
 
       resetForm();
       setIsOpen("");
@@ -77,6 +82,7 @@ const AddEditParty = ({ user, isOpen, setIsOpen }) => {
 
   const formik = useFormik({
     initialValues,
+    enableReinitialize: true,
     validationSchema,
     onSubmit: handleSubmit,
   });
@@ -86,7 +92,7 @@ const AddEditParty = ({ user, isOpen, setIsOpen }) => {
       isOpen={isOpen}
       onClose={() => setIsOpen("")}
       size="lg"
-      title="Add Party"
+      title={isEdit ? "Edit Party" : "Add Party"}
       footer={
         <div className="flex gap-2">
           <CommonButton variant="outline" onClick={() => setIsOpen("")}>
@@ -96,7 +102,7 @@ const AddEditParty = ({ user, isOpen, setIsOpen }) => {
             onClick={formik.handleSubmit}
             disabled={formik.isSubmitting}
           >
-            {t("Create")}
+            {isEdit ? "Update" : "Create"}
           </CommonButton>
         </div>
       }

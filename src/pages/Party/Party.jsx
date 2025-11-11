@@ -16,6 +16,7 @@ const Party = () => {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [search, setSearch] = useState("");
+  const [selectedData, setSelectedData] = useState()
 
   const [partyList, setPartyList] = useState([])
   const [pagination, setPagination] = useState({
@@ -59,7 +60,10 @@ const Party = () => {
           </div>
           <div>
             <Button
-              onClick={() => setIsOpen("add")}
+              onClick={() => {
+                setSelectedData('')
+                setIsOpen("add")
+              }}
               className="flex items-center gap-2"
             >
               <CircleFadingPlus className="size-5" />
@@ -75,6 +79,10 @@ const Party = () => {
               <Card
                 key={item._id || index}
                 className="p-4"
+                onClick={() => {
+                  setIsOpen("add")
+                  setSelectedData(item)
+                }}
               >
                 <div className="grid gap-4 overflow-hidden">
                   <div className="flex sm:flex-col items-center gap-4">
@@ -110,7 +118,7 @@ const Party = () => {
             </p>
           )}
         </div>
-      </Card>
+      </Card >
 
       <div className="flex items-center justify-between max-md:flex-col gap-4">
 
@@ -134,8 +142,9 @@ const Party = () => {
         isOpen={isOpen === "add"}
         setIsOpen={setIsOpen}
         isEdit={isOpen}
+        selectedData={selectedData}
       />
-    </div>
+    </div >
   );
 };
 
