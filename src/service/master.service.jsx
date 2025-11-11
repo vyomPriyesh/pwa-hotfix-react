@@ -30,7 +30,7 @@ const updateCategory = (id, payload) => {
 
 const deleteCategory = (id) => {
     try {
-        const response = serverCall.delete(`/ctg/update/${id}`)
+        const response = serverCall.delete(`/ctg/delete/${id}`)
         return response
     } catch (error) {
         throw error
@@ -82,7 +82,7 @@ const updateParty = (id, payload) => {
 
 const deleteParty = (id) => {
     try {
-        const response = serverCall.delete(`/party/update/${id}`)
+        const response = serverCall.delete(`/party/delete/${id}`)
         return response
     } catch (error) {
         throw error

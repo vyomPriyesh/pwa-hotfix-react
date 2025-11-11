@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import CommonPagination from "../../components/widgets/common_pagination";
 import { CommonTextField } from "../../components/widgets/common_textField";
 import Delete from "./Delete";
-import { CircleFadingPlus, MapPin, Phone } from "lucide-react";
+import { CircleFadingPlus, MapPin, Phone, Trash2 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Separator } from "../../components/ui/separator";
 import masterService from "../../service/master.service";
@@ -40,6 +40,15 @@ const Party = () => {
     setSize(value);
     setPage(1);
   };
+
+  const handleDelete = async () => {
+    try {
+      await masterService.deleteParty(selectedData?._id)
+      setIsOpen("");
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="grid gap-4 lg:gap-6">
@@ -78,13 +87,12 @@ const Party = () => {
             partyList.map((item, index) => (
               <Card
                 key={item._id || index}
-                className="p-4"
-                onClick={() => {
+                className="p-4 relative"
+              >
+                <div className="grid gap-4 overflow-hidden" onClick={() => {
                   setIsOpen("add")
                   setSelectedData(item)
-                }}
-              >
-                <div className="grid gap-4 overflow-hidden">
+                }}>
                   <div className="flex sm:flex-col items-center gap-4">
                     <div className="h-10 w-10 sm:h-16 sm:w-16 rounded-full border border-border flex items-center justify-center">
                       <span className="h5-bold !font-bold uppercase">{item?.name[0]}</span>
@@ -109,6 +117,14 @@ const Party = () => {
                       </p>
                     </div>
                   </div>
+                </div>
+                {/* Delete Icon */}
+                <div onClick={() => {
+                  setIsOpen("delete")
+                  setSelectedData(item)
+                }}
+                  className="absolute z-10 top-0 right-0 h-10 w-10 rounded-bl-full bg-destructive flex items-start justify-end p-1.5 cursor-pointer">
+                  <Trash2 className="text-white size-5" />
                 </div>
               </Card>
             ))
@@ -137,6 +153,7 @@ const Party = () => {
         isOpen={isOpen === "delete"}
         setIsOpen={setIsOpen}
         isDelete={isOpen}
+        handleDelete={handleDelete}
       />
       <AddEditParty
         isOpen={isOpen === "add"}
