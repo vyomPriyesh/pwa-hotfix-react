@@ -4,6 +4,8 @@ import AdminPanelLayout from "../components/admin-panel/admin-panel-layout";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Login from "../pages/authentication/Login";
 import User from "../pages/User/User";
+import Party from "../pages/Party/Party";
+import Category from "../pages/Category/Category";
 
 export const PrivateRoute = ({ children }) => {
   const user = localStorage.getItem("admin_store");
@@ -61,11 +63,11 @@ const routes = (isLoggedIn) => [
         path: "/master/user",
       },
       {
-        element: <User />,
+        element: <Party />,
         path: "/master/party",
       },
       {
-        element: <User />,
+        element: <Category />,
         path: "/master/category",
       },
     ],

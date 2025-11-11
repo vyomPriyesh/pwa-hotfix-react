@@ -37,7 +37,7 @@ const CommonDialog = ({
 
         <div className="py-4">{children}</div>
 
-        {footer && <DialogFooter>{footer}</DialogFooter>}
+        {footer && <DialogFooter className="max-sm:[&_button]:w-full">{footer}</DialogFooter>}
       </DialogContent>
     </Dialog>
   );
