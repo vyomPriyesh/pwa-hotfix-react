@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "../../components/ui/card";
 import {
   Table,
@@ -35,6 +35,7 @@ import Delete from "./Delete";
 import EditUser from "./EditUser";
 import { CircleFadingPlus, Plus } from "lucide-react";
 import { Button } from "../../components/ui/button";
+import userService from "../../service/user.service";
 
 // Static user data
 const staticUsers = [
@@ -133,7 +134,16 @@ const User = () => {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [search, setSearch] = useState("");
+  const [userList, setUserList] = useState()
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const response = await userService.getUserList()
+      console.log("response", response);
+    }
+
+    fetchUserData()
+  }, [])
 
   // Filter users based on search
   const filteredUsers = staticUsers.filter(
@@ -156,8 +166,8 @@ const User = () => {
   return (
     <div className="grid gap-4 lg:gap-6">
       <div className="flex items-center justify-between gap-2">
-      <h3 className="h4-bold">{t("users.userList")}</h3>
-      <h4 className="h6-bold">{t("dashboard.totalUser")}: 14</h4>
+        <h3 className="h4-bold">{t("users.userList")}</h3>
+        <h4 className="h6-bold">{t("dashboard.totalUser")}: 14</h4>
       </div>
 
       <Card className="p-4 grid gap-4 lg:gap-6">
