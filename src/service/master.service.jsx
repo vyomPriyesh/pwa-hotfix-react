@@ -47,9 +47,15 @@ const statusUpdateCategory = (id) => {
 }
 
 // Party master api function
-const getPartyList = () => {
+const getPartyList = (page, limit, search) => {
+    const payload = {
+        page: page,
+        limit: limit,
+        search: search
+    }
+
     try {
-        const response = serverCall.post('/party/all')
+        const response = serverCall.post('/party/all', payload)
         return response
     } catch (error) {
         throw error
@@ -65,7 +71,7 @@ const addParty = (payload) => {
     }
 }
 
-const updateParty= (id, payload) => {
+const updateParty = (id, payload) => {
     try {
         const response = serverCall.post(`/party/update/${id}`, payload)
         return response
@@ -98,7 +104,7 @@ const allDrodown = () => {
         const response = serverCall.get('/all-drop-down')
         return response
     } catch (error) {
-         throw error
+        throw error
     }
 }
 
