@@ -16,7 +16,7 @@ const User = () => {
   const { t } = useTranslation("common");
   const [isOpen, setIsOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const [size, setSize] = useState(2);
+  const [size, setSize] = useState(1);
   const [search, setSearch] = useState("");
   const [userList, setUserList] = useState([])
   const [pagination, setPagination] = useState({
@@ -24,8 +24,8 @@ const User = () => {
     totalPages: 0,
   });
   
-  const fetchUserData = async (page, size) => {
-    const response = await userService.getUserList(page, size)
+  const fetchUserData = async (page, size, search) => {
+    const response = await userService.getUserList(page, size, search)
     if (response) {
       setUserList(response?.data?.data?.data || [])
       setPagination(response?.data?.data?.pagination);
@@ -33,21 +33,8 @@ const User = () => {
   }
 
   useEffect(() => {
-    fetchUserData(page, size)
+    fetchUserData(page, size, search)
   }, [page, size])
-
-  // Filter users based on search
-  const filteredUsers = userList.filter(
-    (user) =>
-      user?.name.toLowerCase().includes(search.toLowerCase()) ||
-      user?.mobile.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const totalUsers = filteredUsers.length;
-  const totalPages = Math.ceil(totalUsers / size);
-
-  // Get paginated users
-  const userData = filteredUsers.slice((page - 1) * size, page * size);
 
   const handleDataSize = (value) => {
     setSize(value);
@@ -81,8 +68,8 @@ const User = () => {
 
         {/* User Data */}
         <div className="grid sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
-          {userData.length > 0 ? (
-            userData.map((item, index) => (
+          {userList.length > 0 ? (
+            userList.map((item, index) => (
               <Card key={item._id || index} className="p-4 shadow-user_card">
                 <div className="flex sm:flex-col items-center gap-4">
                   <div className="h-10 w-10 sm:h-16 sm:w-16 lg:h-24 lg:w-24 overflow-hidden rounded-lg">
@@ -94,7 +81,7 @@ const User = () => {
                   </div>
                   <div className="sm:text-center">
                     <h4 className="h5-bold">{item?.name}</h4>
-                    <p className="p-regular text-black/70">{item?.mobile}</p>
+                    <p className="p-regular text-black/70">{item?.email || "email not found"}</p>
                   </div>
                 </div>
               </Card>
@@ -108,7 +95,7 @@ const User = () => {
       </Card>
 
       <div className="flex items-center justify-between max-md:flex-col gap-4">
-        {totalUsers > size && (
+        
           <CommonPagination
             currentPage={page}
             totalPages={pagination?.totalPages}
@@ -117,7 +104,7 @@ const User = () => {
             onPageSizeChange={handleDataSize}
             className=""
           />
-        )}
+        
       </div>
 
       <Delete

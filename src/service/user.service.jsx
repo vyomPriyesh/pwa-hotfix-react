@@ -1,9 +1,10 @@
 import serverCall from "../serverCall";
 
-const getUserList = (page, limit) => {
+const getUserList = (page, limit, search) => {
     const payload = {
         page: page,
-        limit: limit
+        limit: limit,
+        search: search
     }
 
     try {
