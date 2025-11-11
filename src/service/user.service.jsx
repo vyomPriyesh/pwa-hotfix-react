@@ -1,8 +1,13 @@
 import serverCall from "../serverCall";
 
-const getUserList = () => {
+const getUserList = (page, limit) => {
+    const payload = {
+        page: page,
+        limit: limit
+    }
+
     try {
-        const response = serverCall.post('/all-users')
+        const response = serverCall.post('/all-users', payload)
         return response
     } catch (error) {
         throw error
