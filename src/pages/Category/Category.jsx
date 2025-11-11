@@ -1,131 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "../../components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../components/ui/select";
-import { AiFillEdit } from "react-icons/ai";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../../components/ui/dialog";
-import { Label } from "../../components/ui/label";
-import { Input } from "../../components/ui/input";
 import { useTranslation } from "react-i18next";
 import CommonPagination from "../../components/widgets/common_pagination";
 import { CommonTextField } from "../../components/widgets/common_textField";
-import CommonButton from "../../components/widgets/common_button";
 import Delete from "./Delete";
-import EditUser from "./EditUser";
-import { CircleFadingPlus, Plus } from "lucide-react";
+import { CircleFadingPlus, Trash2 } from "lucide-react";
 import { Button } from "../../components/ui/button";
-
-// Static user data
-const staticUsers = [
-  {
-    _id: "1",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "2",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "3",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "4",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "5",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "6",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "7",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "8",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "9",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "10",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "11",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "12",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "13",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    _id: "14",
-    name: "John Doe",
-    email: "john@example.com",
-    img: "https://i.pravatar.cc/150?img=1",
-  },
-];
-
-const imagePlaceholder =
-  "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=";
+import masterService from "../../service/master.service";
+import AddEditCategory from "./AddEditCategory";
 
 const Category = () => {
   const { t } = useTranslation("common");
@@ -133,31 +15,45 @@ const Category = () => {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [search, setSearch] = useState("");
+  const [selectedData, setSelectedData] = useState()
 
+  const [categoryList, setCategoryList] = useState([])
+  const [pagination, setPagination] = useState({
+    total: 0,
+    totalPages: 0,
+  });
 
-  // Filter users based on search
-  const filteredUsers = staticUsers.filter(
-    (user) =>
-      user.name.toLowerCase().includes(search.toLowerCase()) ||
-      user.email.toLowerCase().includes(search.toLowerCase())
-  );
+  const fetchData = async (page, size, search) => {
+    const response = await masterService.getCategoryList(page, size, search)
+    if (response) {
+      setCategoryList(response?.data?.data?.data || [])
+      setPagination(response?.data?.data?.pagination);
+    }
+  }
 
-  const totalUsers = filteredUsers.length;
-  const totalPages = Math.ceil(totalUsers / size);
-
-  // Get paginated users
-  const userData = filteredUsers.slice((page - 1) * size, page * size);
+  useEffect(() => {
+    fetchData(page, size, search)
+  }, [page, size, search, isOpen])
 
   const handleDataSize = (value) => {
     setSize(value);
     setPage(1);
   };
 
+  const handleDelete = async () => {
+    try {
+      await masterService.deleteCategory(selectedData?._id)
+      setIsOpen("");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className="grid gap-4 lg:gap-6">
       <div className="flex items-center justify-between gap-2">
-      <h3 className="h4-bold">{t("users.userList")}</h3>
-      <h4 className="h6-bold">{t("dashboard.totalUser")}: 14</h4>
+        <h3 className="h4-bold">{t("users.userList")}</h3>
+        <h4 className="h6-bold">{t("dashboard.totalUser")}: {pagination?.total}</h4>
       </div>
 
       <Card className="p-4 grid gap-4 lg:gap-6">
@@ -171,7 +67,11 @@ const Category = () => {
             />
           </div>
           <div>
-            <Button onClick={() => setIsOpen("edit")} className="flex items-center gap-2">
+            <Button onClick={() => {
+              setIsOpen("add")
+              setSelectedData('')
+            }}
+              className="flex items-center gap-2">
               <CircleFadingPlus className="size-5" />
               <span className="max-lg:hidden uppercase"> Add</span>
             </Button>
@@ -180,12 +80,24 @@ const Category = () => {
 
         {/* User Data */}
         <div className="grid sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
-          {userData.length > 0 ? (
-            userData.map((item, index) => (
-              <Card key={item._id || index} className="p-4 shadow-user_card">
-                  <div className="sm:text-center">
-                    <h4 className="h6-bold">{item.name}</h4>
-                  </div>
+          {categoryList?.length > 0 ? (
+            categoryList?.map((item, index) => (
+              <Card key={item._id || index} className="p-4 shadow-user_card relative" >
+                <div className="sm:text-center cursor-pointer" onClick={() => {
+                  setSelectedData(item)
+                  setIsOpen('add')
+                }}
+                >
+                  <h4 className="h6-bold">{item?.name}</h4>
+                </div>
+
+                <div onClick={() => {
+                  setIsOpen("delete")
+                  setSelectedData(item)
+                }}
+                  className="absolute z-10 top-0 right-0 h-10 w-10 rounded-bl-full bg-destructive flex items-start justify-end p-1.5 cursor-pointer">
+                  <Trash2 className="text-white size-5" />
+                </div>
               </Card>
             ))
           ) : (
@@ -197,27 +109,29 @@ const Category = () => {
       </Card>
 
       <div className="flex items-center justify-between max-md:flex-col gap-4">
-        {totalUsers > size && (
-          <CommonPagination
-            currentPage={page}
-            totalPages={totalPages}
-            onPageChange={(newPage) => setPage(newPage)}
-            pageSize={size}
-            onPageSizeChange={handleDataSize}
-            className=""
-          />
-        )}
+
+        <CommonPagination
+          currentPage={page}
+          totalPages={pagination?.totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
+          pageSize={size}
+          onPageSizeChange={handleDataSize}
+          className=""
+        />
+
       </div>
 
       <Delete
         isOpen={isOpen === "delete"}
         setIsOpen={setIsOpen}
         isDelete={isOpen}
+        handleDelete={handleDelete}
       />
-      <EditUser
-        isOpen={isOpen === "edit"}
+      <AddEditCategory
+        isOpen={isOpen === "add"}
         setIsOpen={setIsOpen}
         isEdit={isOpen}
+        selectedData={selectedData}
       />
     </div>
   );

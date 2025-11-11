@@ -1,9 +1,15 @@
 import serverCall from "../serverCall";
 
 // category master api function
-const getCategoryList = () => {
+const getCategoryList = (page, limit, search) => {
+     const payload = {
+        page: page,
+        limit: limit,
+        search: search
+    }
+
     try {
-        const response = serverCall.post('/ctg/all')
+        const response = serverCall.post('/ctg/all', payload)
         return response
     } catch (error) {
         throw error
