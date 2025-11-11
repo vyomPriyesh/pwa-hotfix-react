@@ -6,6 +6,7 @@ import Login from "../pages/authentication/Login";
 import User from "../pages/User/User";
 import Party from "../pages/Party/Party";
 import Category from "../pages/Category/Category";
+import Design from "../pages/Design/Design";
 
 export const PrivateRoute = ({ children }) => {
   const user = localStorage.getItem("admin_store");
@@ -69,6 +70,10 @@ const routes = (isLoggedIn) => [
       {
         element: <Category />,
         path: "/master/category",
+      },
+      {
+        element: <Design />,
+        path: "/design",
       },
     ],
   },

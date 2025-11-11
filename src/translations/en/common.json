@@ -22,7 +22,8 @@
     "master": "Master",
     "user": "User",
     "party": "Party",
-    "category": "Category"
+    "category": "Category",
+    "design": "Design"
   },
   "auth": {
     "signInToYourAccount": "Sign in to your account",
@@ -75,6 +76,41 @@
     "update": "Update"
   },
 
+  "category": {
+    "categoryList": "Category List",
+    "categoryName": "Category Name",
+    "editBadge": "Edit Category",
+    "update": "Update"
+  },
+  
+  "design": {
+    "addDesign": "Add Design",
+    "editDesign": "Edit Design",
+    "designList": "Design List",
+    "designName": "Design Name",
+    "totalDesign": "Total Design",
+    "editBadge": "Edit Design",
+    "update": "Update",
+    "date": "Date",
+    "designNo": "Design No",
+    "category": "Category",
+    "partyName": "Party Name",
+    "rate": "Rate",
+    "stonePaper": "Stone Paper Details",
+    "totalPaper": "Total Paper",
+    "totalStone": "Total Stone",
+    "jobDetails": "Job Details",
+    "work":"Work",
+    "item":"Item",
+    "unit":"Unit",
+    "price":"Price",
+    "totalPrice":"Total Price",
+    "total":"Total",
+    "amount":"Amount",
+    "finalAmount":"Final Amount",
+    "notes" : "Notes"
+  },
+
   "deleteDialog": {
     "areYouSure": "Are you sure?",
     "areYouSureDelete": "Are you sure you want to delete this item?"
@@ -89,6 +125,8 @@
   "companyPlaceholder": "Enter company name",
   "pancardPlaceholder": "Enter PAN card number",
   "gstPlaceholder": "Enter GST number",
+  "designNoPlaceholder": "Enter design no",
+  "notePlaceholder": "Enter notes",
   "passwordPlaceholder": "Enter your password",
   "emailPlaceholder": "Enter your email",
   "mobilePlaceholder": "Enter your mobile number",

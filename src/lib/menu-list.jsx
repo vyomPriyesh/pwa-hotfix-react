@@ -1,5 +1,6 @@
 import { Box, Handshake, LayoutList, User } from "lucide-react";
-import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { MdDraw, MdOutlineSpaceDashboard } from "react-icons/md";
+import { SiLibreofficedraw } from "react-icons/si";
 
 export function getMenuList(pathname) {
   return [
@@ -57,6 +58,13 @@ export function getMenuList(pathname) {
               icon: LayoutList,
             },
           ],
+        },
+        {
+          href: "/design",
+          label: "design",
+          active: pathname === "/deign",
+          icon: MdDraw,
+          submenus: [],
         },
       ],
     },
