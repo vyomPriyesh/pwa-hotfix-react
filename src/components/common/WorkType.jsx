@@ -5,8 +5,7 @@ import { useTranslation } from "react-i18next";
 import CommonButton from "../../components/widgets/common_button";
 import CommonDialog from "../../components/widgets/common_dialog";
 
-
-const EditUser = ({ user, isOpen, setIsOpen }) => {
+const WorkType = ({ user, isOpen, setIsOpen }) => {
   const { t } = useTranslation("common");
 
   return (
@@ -34,9 +33,7 @@ const EditUser = ({ user, isOpen, setIsOpen }) => {
         </div>
       </div>
     </CommonDialog>
-  );
-};
+  )
+}
 
-export default EditUser;
-
-// Date Picker
+export default WorkType

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import CommonPagination from "../../components/widgets/common_pagination";
 import { CommonTextField } from "../../components/widgets/common_textField";
 import Delete from "./Delete";
-import { CircleFadingPlus, Plus } from "lucide-react";
+import { CircleFadingPlus, Plus, Trash2 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import userService from "../../service/user.service";
 import AddEditUser from "./AddEditUser";
@@ -70,7 +70,7 @@ const User = () => {
         <div className="grid sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
           {userList.length > 0 ? (
             userList.map((item, index) => (
-              <Card key={item._id || index} className="p-4 shadow-user_card">
+              <Card key={item._id || index} className="p-4 shadow-user_card relative overflow-hidden">
                 <div className="flex sm:flex-col items-center gap-4">
                   <div className="h-10 w-10 sm:h-16 sm:w-16 lg:h-24 lg:w-24 overflow-hidden rounded-lg">
                     <img
@@ -84,12 +84,19 @@ const User = () => {
                     <p className="p-regular text-black/70">{item?.email || "email not found"}</p>
                   </div>
                 </div>
+
+                {/* Delete Icon */}
+                <div onClick={() => setIsOpen("delete")} className="absolute top-0 right-0 h-10 w-10 rounded-bl-full bg-destructive flex items-start justify-end p-1.5 cursor-pointer">
+                <Trash2 className="text-white size-5" />
+                </div>
               </Card>
             ))
           ) : (
+            <div className="h-96">
             <p className="text-center text-black/50 font-medium text-xl col-span-full">
               {t("users.noUsersFound")}
             </p>
+            </div>
           )}
         </div>
       </Card>
@@ -116,6 +123,12 @@ const User = () => {
         isOpen={isOpen === "edit"}
         setIsOpen={setIsOpen}
         isEdit={isOpen}
+      />
+
+      <Delete
+        isOpen={isOpen === "delete"}
+        setIsOpen={setIsOpen}
+        isDelete={isOpen}
       />
     </div>
   );
