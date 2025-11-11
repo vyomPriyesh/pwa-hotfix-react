@@ -20,7 +20,7 @@ const requestHandler = (request) => {
 const responseHandler = (response) => {
   if (response.status === 401 || response.status === 403) {
     localStorage.clear();
-    window.location.reload("/login");
+    window.location.replace("/login");
   }
   return response;
 };
@@ -33,7 +33,7 @@ const responseErrorHandler = (error) => {
   if (error.response) {
     if (error.response.status === 401 || error.response.status === 403) {
       localStorage.clear();
-      window.location.reload("/login");
+      window.location.replace("/login");
       return Promise.reject(error);
     }
   }
