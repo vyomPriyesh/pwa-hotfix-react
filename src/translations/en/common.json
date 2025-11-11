@@ -87,6 +87,8 @@
     "editDesign": "Edit Design",
     "designList": "Design List",
     "designName": "Design Name",
+    "selectCategory": "Select Category",
+    "selectPartyName": "Select Party Name",
     "totalDesign": "Total Design",
     "editBadge": "Edit Design",
     "update": "Update",
@@ -142,10 +144,11 @@
   "close": "Close",
   "password": "Password",
   "email": "Email",
-  "search": "Search",
+  "search": "Search ...",
   "submit": "Submit",
   "cancel": "Cancel",
   "previous": "Previous",
   "next": "Next",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "noDataFound": "No data found"
 }
