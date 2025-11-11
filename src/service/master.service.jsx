@@ -46,6 +46,16 @@ const statusUpdateCategory = (id) => {
     }
 }
 
+// Work Type api funtion
+const addWorkType = (payload) => {
+    try {
+        const response = serverCall.post('/worktype/add', payload)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 // Party master api function
 const getPartyList = (page, limit, search) => {
     const payload = {
@@ -111,7 +121,7 @@ const allDrodown = () => {
 const masterService = {
     getCategoryList, addCategory, updateCategory, deleteCategory, statusUpdateCategory,
     getPartyList, addParty, updateParty, deleteParty, statusUpdateParty,
-    allDrodown
+    allDrodown, addWorkType
 }
 
 export default masterService

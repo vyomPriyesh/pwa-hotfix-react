@@ -114,11 +114,6 @@ const User = () => {
         
       </div>
 
-      <Delete
-        isOpen={isOpen === "delete"}
-        setIsOpen={setIsOpen}
-        isDelete={isOpen}
-      />
       <AddEditUser
         isOpen={isOpen === "edit"}
         setIsOpen={setIsOpen}
