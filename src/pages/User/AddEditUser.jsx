@@ -58,7 +58,7 @@ const frameworks = [
   },
 ]
 
-const EditUser = ({ user, isOpen, setIsOpen }) => {
+const AddEditUser = ({ user, isOpen, setIsOpen }) => {
   const { t } = useTranslation("common");
 
   // Date Picker Component
@@ -320,6 +320,6 @@ const EditUser = ({ user, isOpen, setIsOpen }) => {
   );
 };
 
-export default EditUser;
+export default AddEditUser;
 
 // Date Picker

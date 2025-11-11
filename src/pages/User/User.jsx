@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 import CommonPagination from "../../components/widgets/common_pagination";
 import { CommonTextField } from "../../components/widgets/common_textField";
 import Delete from "./Delete";
-import EditUser from "./EditUser";
 import { CircleFadingPlus, Plus } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import userService from "../../service/user.service";
+import AddEditUser from "./AddEditUser";
 
 const imagePlaceholder =
   "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=";
@@ -16,7 +16,7 @@ const User = () => {
   const { t } = useTranslation("common");
   const [isOpen, setIsOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const [size, setSize] = useState(1);
+  const [size, setSize] = useState(10);
   const [search, setSearch] = useState("");
   const [userList, setUserList] = useState([])
   const [pagination, setPagination] = useState({
@@ -34,7 +34,7 @@ const User = () => {
 
   useEffect(() => {
     fetchUserData(page, size, search)
-  }, [page, size])
+  }, [page, size, search])
 
   const handleDataSize = (value) => {
     setSize(value);
@@ -112,7 +112,7 @@ const User = () => {
         setIsOpen={setIsOpen}
         isDelete={isOpen}
       />
-      <EditUser
+      <AddEditUser
         isOpen={isOpen === "edit"}
         setIsOpen={setIsOpen}
         isEdit={isOpen}
