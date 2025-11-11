@@ -7,8 +7,8 @@ import Delete from "./Delete";
 import { CircleFadingPlus, MapPin, Phone } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Separator } from "../../components/ui/separator";
-import EditParty from "./EditParty";
 import masterService from "../../service/master.service";
+import AddEditParty from "./AddEditParty";
 
 const Party = () => {
   const { t } = useTranslation("common");
@@ -33,7 +33,7 @@ const Party = () => {
 
   useEffect(() => {
     fetchData(page, size, search)
-  }, [page, size, search])
+  }, [page, size, search, isOpen])
 
   const handleDataSize = (value) => {
     setSize(value);
@@ -43,8 +43,8 @@ const Party = () => {
   return (
     <div className="grid gap-4 lg:gap-6">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="h4-bold">{t("users.userList")}</h3>
-        <h4 className="h6-bold">{t("dashboard.totalUser")}: 14</h4>
+        <h3 className="h4-bold">{t("users.partyList")}</h3>
+        <h4 className="h6-bold">{t("dashboard.totalUser")}: {pagination?.total}</h4>
       </div>
 
       <Card className="p-4 grid gap-4 lg:gap-6 bg-mainBackground">
@@ -59,7 +59,7 @@ const Party = () => {
           </div>
           <div>
             <Button
-              onClick={() => setIsOpen("edit")}
+              onClick={() => setIsOpen("add")}
               className="flex items-center gap-2"
             >
               <CircleFadingPlus className="size-5" />
@@ -130,8 +130,8 @@ const Party = () => {
         setIsOpen={setIsOpen}
         isDelete={isOpen}
       />
-      <EditParty
-        isOpen={isOpen === "edit"}
+      <AddEditParty
+        isOpen={isOpen === "add"}
         setIsOpen={setIsOpen}
         isEdit={isOpen}
       />

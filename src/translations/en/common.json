@@ -43,6 +43,7 @@
   },
   "users": {
     "userList": "User List",
+    "partyList": "Party List",
     "name": "Name",
     "email": "Email",
     "mobile": "Mobile",
