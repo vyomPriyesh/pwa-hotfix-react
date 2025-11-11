@@ -33,7 +33,8 @@ import { CommonTextField } from "../../components/widgets/common_textField";
 import CommonButton from "../../components/widgets/common_button";
 import Delete from "./Delete";
 import EditUser from "./EditUser";
-import { Trash2 } from "lucide-react";
+import { CircleFadingPlus, Plus } from "lucide-react";
+import { Button } from "../../components/ui/button";
 
 // Static user data
 const staticUsers = [
@@ -41,138 +42,90 @@ const staticUsers = [
     _id: "1",
     name: "John Doe",
     email: "john@example.com",
-    rank: "Gold",
-    isActive: true,
     img: "https://i.pravatar.cc/150?img=1",
-    isDeleted: false,
   },
   {
     _id: "2",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    rank: "Silver",
-    isActive: false,
-    img: "https://i.pravatar.cc/150?img=2",
-    isDeleted: false,
-  },
-  {
-    _id: "3",
-    name: "Mike Johnson",
-    email: "mike@example.com",
-    rank: "Bronze",
-    isActive: true,
-    img: "https://i.pravatar.cc/150?img=3",
-    isDeleted: false,
-  },
-  {
-    _id: "4",
-    name: "Sarah Wilson",
-    email: "sarah@example.com",
-    rank: "Platinum",
-    isActive: true,
-    img: "https://i.pravatar.cc/150?img=4",
-    isDeleted: false,
-  },
-  {
-    _id: "5",
-    name: "David Brown",
-    email: "david@example.com",
-    rank: "Gold",
-    isActive: false,
-    img: "https://i.pravatar.cc/150?img=5",
-    isDeleted: false,
-  },
-  {
-    _id: "1",
     name: "John Doe",
     email: "john@example.com",
-    rank: "Gold",
-    isActive: true,
     img: "https://i.pravatar.cc/150?img=1",
-    isDeleted: false,
-  },
-  {
-    _id: "2",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    rank: "Silver",
-    isActive: false,
-    img: "https://i.pravatar.cc/150?img=2",
-    isDeleted: false,
   },
   {
     _id: "3",
-    name: "Mike Johnson",
-    email: "mike@example.com",
-    rank: "Bronze",
-    isActive: true,
-    img: "https://i.pravatar.cc/150?img=3",
-    isDeleted: false,
-  },
-  {
-    _id: "4",
-    name: "Sarah Wilson",
-    email: "sarah@example.com",
-    rank: "Platinum",
-    isActive: true,
-    img: "https://i.pravatar.cc/150?img=4",
-    isDeleted: false,
-  },
-  {
-    _id: "5",
-    name: "David Brown",
-    email: "david@example.com",
-    rank: "Gold",
-    isActive: false,
-    img: "https://i.pravatar.cc/150?img=5",
-    isDeleted: false,
-  },
-  {
-    _id: "1",
     name: "John Doe",
     email: "john@example.com",
-    rank: "Gold",
-    isActive: true,
     img: "https://i.pravatar.cc/150?img=1",
-    isDeleted: false,
-  },
-  {
-    _id: "2",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    rank: "Silver",
-    isActive: false,
-    img: "https://i.pravatar.cc/150?img=2",
-    isDeleted: false,
-  },
-  {
-    _id: "3",
-    name: "Mike Johnson",
-    email: "mike@example.com",
-    rank: "Bronze",
-    isActive: true,
-    img: "https://i.pravatar.cc/150?img=3",
-    isDeleted: false,
   },
   {
     _id: "4",
-    name: "Sarah Wilson",
-    email: "sarah@example.com",
-    rank: "Platinum",
-    isActive: true,
-    img: "https://i.pravatar.cc/150?img=4",
-    isDeleted: false,
+    name: "John Doe",
+    email: "john@example.com",
+    img: "https://i.pravatar.cc/150?img=1",
   },
   {
     _id: "5",
-    name: "David Brown",
-    email: "david@example.com",
-    rank: "Gold",
-    isActive: false,
-    img: "https://i.pravatar.cc/150?img=5",
-    isDeleted: false,
+    name: "John Doe",
+    email: "john@example.com",
+    img: "https://i.pravatar.cc/150?img=1",
+  },
+  {
+    _id: "6",
+    name: "John Doe",
+    email: "john@example.com",
+    img: "https://i.pravatar.cc/150?img=1",
+  },
+  {
+    _id: "7",
+    name: "John Doe",
+    email: "john@example.com",
+    img: "https://i.pravatar.cc/150?img=1",
+  },
+  {
+    _id: "8",
+    name: "John Doe",
+    email: "john@example.com",
+    img: "https://i.pravatar.cc/150?img=1",
+  },
+  {
+    _id: "9",
+    name: "John Doe",
+    email: "john@example.com",
+    img: "https://i.pravatar.cc/150?img=1",
+  },
+  {
+    _id: "10",
+    name: "John Doe",
+    email: "john@example.com",
+    img: "https://i.pravatar.cc/150?img=1",
+  },
+  {
+    _id: "11",
+    name: "John Doe",
+    email: "john@example.com",
+    img: "https://i.pravatar.cc/150?img=1",
+  },
+  {
+    _id: "12",
+    name: "John Doe",
+    email: "john@example.com",
+    img: "https://i.pravatar.cc/150?img=1",
+  },
+  {
+    _id: "13",
+    name: "John Doe",
+    email: "john@example.com",
+    img: "https://i.pravatar.cc/150?img=1",
+  },
+  {
+    _id: "14",
+    name: "John Doe",
+    email: "john@example.com",
+    img: "https://i.pravatar.cc/150?img=1",
   },
 ];
+
+const imagePlaceholder =
+  "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=";
 
 const User = () => {
   const { t } = useTranslation("common");
@@ -181,13 +134,6 @@ const User = () => {
   const [size, setSize] = useState(10);
   const [search, setSearch] = useState("");
 
-  const imagePlaceholder =
-    "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=";
-
-  const handleStatusChange = (index, userStatus, user) => {
-    // In a real app, this would update the state
-    console.log("Status changed:", { index, userStatus, user });
-  };
 
   // Filter users based on search
   const filteredUsers = staticUsers.filter(
@@ -208,21 +154,59 @@ const User = () => {
   };
 
   return (
-    <Card className="p-10 grid gap-6">
-      <h3 className="text-xl tab:text-2xl font-bold">{t("users.userList")}</h3>
-
-      <div className="flex items-center justify-between gap-4 max-lg:flex-col">
-        <div className="lg:max-w-72 w-full grid gap-1">
-          <CommonTextField
-            type="text"
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={t("searchPlaceholder")}
-            className="w-full"
-          />
-        </div>
+    <div className="grid gap-4 lg:gap-6">
+      <div className="flex items-center justify-between gap-2">
+      <h3 className="h4-bold">{t("users.userList")}</h3>
+      <h4 className="h6-bold">{t("dashboard.totalUser")}: 14</h4>
       </div>
 
-      <Table className="whitespace-nowrap">
+      <Card className="p-4 grid gap-4 lg:gap-6">
+        <div className="flex items-center justify-between gap-4">
+          <div className="lg:max-w-72 w-full grid gap-1">
+            <CommonTextField
+              type="text"
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t("searchPlaceholder")}
+              className="w-full"
+            />
+          </div>
+          <div>
+            <Button onClick={() => setIsOpen("edit")} className="flex items-center gap-2">
+              <CircleFadingPlus className="size-5" />
+              <span className="max-lg:hidden uppercase"> Add</span>
+            </Button>
+          </div>
+        </div>
+
+        {/* User Data */}
+        <div className="grid sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
+          {userData.length > 0 ? (
+            userData.map((item, index) => (
+              <Card key={item._id || index} className="p-4 shadow-user_card">
+                <div className="flex sm:flex-col items-center gap-4">
+                  <div className="h-10 w-10 sm:h-16 sm:w-16 lg:h-24 lg:w-24 overflow-hidden rounded-lg">
+                    <img
+                      src={item.img || imagePlaceholder}
+                      alt="User"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="sm:text-center">
+                    <h4 className="h5-bold">{item.name}</h4>
+                    <p className="p-regular text-black/70">{item.email}</p>
+                  </div>
+                </div>
+              </Card>
+            ))
+          ) : (
+            <p className="text-center text-black/50 font-medium text-xl col-span-full">
+              {t("users.noUsersFound")}
+            </p>
+          )}
+        </div>
+      </Card>
+
+      {/* <Table className="whitespace-nowrap">
         <TableHeader>
           <TableRow>
             <TableHead className="w-14">{t("users.no")}</TableHead>
@@ -283,7 +267,6 @@ const User = () => {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2 justify-center">
-                    {/* <EditUser user={item} /> */}
                     <CommonButton
                       variant="outline"
                       className="size-9"
@@ -318,7 +301,7 @@ const User = () => {
             </TableRow>
           )}
         </TableBody>
-      </Table>
+      </Table> */}
 
       <div className="flex items-center justify-between max-md:flex-col gap-4">
         {totalUsers > size && (
@@ -343,7 +326,7 @@ const User = () => {
         setIsOpen={setIsOpen}
         isEdit={isOpen}
       />
-    </Card>
+    </div>
   );
 };
 

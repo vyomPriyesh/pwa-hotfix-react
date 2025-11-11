@@ -59,6 +59,9 @@ module.exports = {
         40: "40px",
         56: "56px",
       },
+      boxShadow: {
+        user_card: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+      },
       keyframes: {
         "accordion-down": {
           from: {
@@ -107,8 +110,8 @@ module.exports = {
       lg: "1024px",
       lgs: "1150px",
       xl: "1280px",
-      "2xl": "1440px",
-      "3xl": "1600px",
+      xxl: "1440px",
+      xxxl: "1600px",
     },
   },
   plugins: [require("tailwindcss-animate")],

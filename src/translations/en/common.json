@@ -1,4 +1,9 @@
 {
+  "lang": {
+    "english": "English",
+    "hindi": "Hindi",
+    "gujarati": "Gujarati"
+  },
   "messages": {
     "email": "Email must be a valid email",
     "emailRequired": "Email is required",
@@ -14,7 +19,10 @@
   },
   "sidebar": {
     "dashboard": "Dashboard",
-    "users": "Users"
+    "master": "Master",
+    "user": "User",
+    "party": "Party",
+    "category": "Category"
   },
   "auth": {
     "signInToYourAccount": "Sign in to your account",
@@ -37,29 +45,40 @@
     "userList": "User List",
     "name": "Name",
     "email": "Email",
-    "rank": "Rank",
-    "status": "Status",
-    "no": "No",
-    "image": "Image",
-    "badge": "Badge",
-    "block": "Block",
-    "unBlock": "Unblock",
-    "editBadge": "Edit Badge",
+    "mobile": "Mobile",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "dob": "Date of Birth",
+    "role": "Role",
+    "workType": "Work Type",
+    "fromTime": "From Time",
+    "toTime": "To Time",
+    "hideChallange": "Hide Challange Image to this User ?",
+    "hideDesign": "Hide Design Image to this User ?",
+    "hidePaper": "Hide Paper Image to this User ?",
+    "image": "Profile Image",
+    "editBadge": "Edit User",
     "update": "Update",
-    "noUsersFound": "No users found.",
     "perPage": "Per Page",
     "goTo": "Go to"
   },
+
   "deleteDialog": {
     "areYouSure": "Are you sure?",
     "areYouSureDelete": "Are you sure you want to delete this item?"
   },
+
   "footer": {
     "copyright": "Shadcn Admin All rights reserved."
   },
-  "usernamePlaceholder": "Enter your username",
+  
+  "usernamePlaceholder": "Enter your name",
   "passwordPlaceholder": "Enter your password",
   "emailPlaceholder": "Enter your email",
+  "mobilePlaceholder": "Enter your mobile number",
+  "confirmPasswordPlaceholder": "Confirm your password",
+  "selectRolePlaceholder": "Select Role",
+  "selectWorkTypePlaceholder": "Select Work Type",
   "searchPlaceholder": "Search...",
   "openDialog": "Open Dialog",
   "closeDialog": "Close Dialog",

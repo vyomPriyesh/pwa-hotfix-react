@@ -1,4 +1,4 @@
-import { Bookmark, Handshake, LayoutList, SquarePen, Tag, User } from "lucide-react";
+import { Box, Handshake, LayoutList, User } from "lucide-react";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 
 export function getMenuList(pathname) {
@@ -34,43 +34,29 @@ export function getMenuList(pathname) {
         },
         {
           href: "",
-          label: "Master",
+          label: "master",
           active: pathname.includes("/master"),
-          icon: SquarePen,
+          icon: Box,
           submenus: [
             {
               href: "/master/user",
-              label: "User",
+              label: "user",
               active: pathname === "/master/user",
               icon: User,
             },
             {
               href: "/master/party",
-              label: "Party",
+              label: "party",
               active: pathname === "/master/party",
               icon: Handshake,
             },
             {
               href: "/master/category",
-              label: "Category",
+              label: "category",
               active: pathname === "/master/category",
               icon: LayoutList,
             },
           ],
-        },
-        {
-          href: "/categories",
-          label: "Categories",
-          active: pathname.includes("/categories"),
-          icon: Bookmark,
-          submenus: [],
-        },
-        {
-          href: "/tags",
-          label: "Tags",
-          active: pathname.includes("/tags"),
-          icon: Tag,
-          submenus: [],
         },
       ],
     },

@@ -1,0 +1,86 @@
+{
+  "lang": {
+    "english": "अंग्रेज़ी",
+    "hindi": "हिन्दी",
+    "gujarati": "गुजराती"
+  },
+  "messages": {
+    "email": "ईमेल एक मान्य ईमेल होना चाहिए",
+    "emailRequired": "ईमेल आवश्यक है",
+    "password": "पासवर्ड कम से कम 8 अक्षरों का होना चाहिए",
+    "passwordMin": "पासवर्ड कम से कम 8 अक्षरों का होना चाहिए",
+    "passwordRequired": "पासवर्ड आवश्यक है",
+    "passwordUppercase": "पासवर्ड में कम से कम एक बड़े अक्षर का होना आवश्यक है",
+    "passwordLowercase": "पासवर्ड में कम से कम एक छोटे अक्षर का होना आवश्यक है",
+    "passwordNumber": "पासवर्ड में कम से कम एक संख्या होनी चाहिए",
+    "passwordSpecialChar": "पासवर्ड में कम से कम एक विशेष चिन्ह होना चाहिए",
+    "loginSuccess": "लॉगिन सफल हुआ!",
+    "somethingWentWrong": "कुछ गलत हो गया"
+  },
+  "sidebar": {
+    "dashboard": "डैशबोर्ड",
+    "master": "मास्टर",
+    "user": "उपयोगकर्ता",
+    "party": "पार्टी",
+    "category": "श्रेणी"
+  },
+  "auth": {
+    "signInToYourAccount": "अपने खाते में साइन इन करें",
+    "forgotPassword": "क्या आप पासवर्ड भूल गए?",
+    "rememberMe": "मुझे याद रखें",
+    "signIn": "साइन इन करें",
+    "googleLogin": "गूगल से जारी रखें",
+    "appleLogin": "एप्पल से जारी रखें"
+  },
+  "dashboard": {
+    "totalUser": "कुल उपयोगकर्ता",
+    "totalPost": "कुल पोस्ट",
+    "totalComment": "कुल टिप्पणी",
+    "all": "सभी",
+    "day": "दिन",
+    "week": "सप्ताह",
+    "month": "महीना"
+  },
+  "users": {
+    "userList": "उपयोगकर्ता सूची",
+    "name": "नाम",
+    "email": "ईमेल",
+    "rank": "पद",
+    "status": "स्थिति",
+    "no": "क्रमांक",
+    "image": "छवि",
+    "badge": "बैज",
+    "block": "ब्लॉक करें",
+    "unBlock": "अनब्लॉक करें",
+    "editBadge": "बैज संपादित करें",
+    "update": "अपडेट करें",
+    "noUsersFound": "कोई उपयोगकर्ता नहीं मिला।",
+    "perPage": "प्रति पेज",
+    "goTo": "जाएं"
+  },
+  "deleteDialog": {
+    "areYouSure": "क्या आप सुनिश्चित हैं?",
+    "areYouSureDelete": "क्या आप वास्तव में इस आइटम को हटाना चाहते हैं?"
+  },
+  "footer": {
+    "copyright": "Shadcn एडमिन सर्वाधिकार सुरक्षित।"
+  },
+  "usernamePlaceholder": "अपना उपयोगकर्ता नाम दर्ज करें",
+  "passwordPlaceholder": "अपना पासवर्ड दर्ज करें",
+  "emailPlaceholder": "अपना ईमेल दर्ज करें",
+  "searchPlaceholder": "खोजें...",
+  "openDialog": "संवाद खोलें",
+  "closeDialog": "संवाद बंद करें",
+  "logout": "लॉग आउट करें",
+  "delete": "हटाएं",
+  "username": "उपयोगकर्ता नाम",
+  "close": "बंद करें",
+  "password": "पासवर्ड",
+  "email": "ईमेल",
+  "search": "खोजें",
+  "submit": "जमा करें",
+  "cancel": "रद्द करें",
+  "previous": "पिछला",
+  "next": "अगला",
+  "confirm": "पुष्टि करें"
+}

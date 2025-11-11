@@ -6,7 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store";
-import common_it from "./translations/it/common.json";
+import common_hi from "./translations/hi/common.json";
+import common_gu from "./translations/gu/common.json";
 import common_en from "./translations/en/common.json";
 import i18next from "i18next";
 import { I18nextProvider } from "react-i18next";
@@ -20,8 +21,11 @@ i18next.init({
     en: {
       common: common_en, // 'common' is our custom namespace
     },
-    it: {
-      common: common_it,
+    hi: {
+      common: common_hi,
+    },
+    gu: {
+      common: common_gu,
     },
   },
 });
