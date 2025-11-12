@@ -13,7 +13,7 @@ const updateUser = (id, payload) => {
         const response = serverCall.post(`/update-profile/${id}`, payload)
         return response
     } catch (error) {
-        throw error
+        throw error 
     }
 }
 const deleteUser = (id) => {
