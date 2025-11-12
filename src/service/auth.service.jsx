@@ -16,6 +16,16 @@ const login = async (body) => {
   }
 };
 
+const imageUpload = async (payload) => {
+  try {
+    const response = serverCall.post(`/images/upload`, payload)
+    return response
+  } catch (error) {
+    throw error
+  }
+
+}
+
 const setDataToLocal = (data) => {
 
   const token = data?.data?.token;
@@ -24,12 +34,12 @@ const setDataToLocal = (data) => {
   // const userProfile = {
   //   token
   // };
-  
+
   localStorage.setItem("admin_store", token);
 };
 
 const AuthService = {
-  login,
+  login,imageUpload
 };
 
 export default AuthService;

@@ -1,161 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "../../components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../components/ui/select";
-import { AiFillEdit } from "react-icons/ai";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../../components/ui/dialog";
-import { Label } from "../../components/ui/label";
-import { Input } from "../../components/ui/input";
 import { useTranslation } from "react-i18next";
 import CommonPagination from "../../components/widgets/common_pagination";
 import { CommonTextField } from "../../components/widgets/common_textField";
-import CommonButton from "../../components/widgets/common_button";
 import Delete from "./Delete";
-import EditUser from "./EditParty";
-import { CircleFadingPlus, MapPin, Phone, Plus } from "lucide-react";
+import { CircleFadingPlus, MapPin, Phone, Trash2 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Separator } from "../../components/ui/separator";
-import EditParty from "./EditParty";
-
-// Static user data
-const staticUsers = [
-  {
-    _id: "1",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "2",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "3",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "4",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "5",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "6",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "7",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "8",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "9",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "10",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "11",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "12",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "13",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-  {
-    _id: "14",
-    company: "Vyom Infotech",
-    name: "Priyank Mangukiya",
-    mobile: "9876543210",
-    address:
-      "Silver Business Point, VIP Circle, Mota-Varachha, Surat, Gujarat 395006",
-  },
-];
-
-const imagePlaceholder =
-  "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=";
+import masterService from "../../service/master.service";
+import AddEditParty from "./AddEditParty";
 
 const Party = () => {
   const { t } = useTranslation("common");
@@ -163,30 +16,46 @@ const Party = () => {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [search, setSearch] = useState("");
+  const [selectedData, setSelectedData] = useState()
 
-  // Filter users based on search
-  const filteredUsers = staticUsers.filter(
-    (user) =>
-      user.name.toLowerCase().includes(search.toLowerCase()) ||
-      user.email.toLowerCase().includes(search.toLowerCase())
-  );
+  const [partyList, setPartyList] = useState([])
+  const [pagination, setPagination] = useState({
+    total: 0,
+    totalPages: 0,
+  });
 
-  const totalUsers = filteredUsers.length;
-  const totalPages = Math.ceil(totalUsers / size);
+  const fetchData = async (page, size, search) => {
+    const response = await masterService.getPartyList(page, size, search)
+    if (response) {
+      setPartyList(response?.data?.data?.data || [])
+      setPagination(response?.data?.data?.pagination);
+    }
+  }
 
-  // Get paginated users
-  const userData = filteredUsers.slice((page - 1) * size, page * size);
+  useEffect(() => {
+    fetchData(page, size, search)
+  }, [page, size, search, isOpen])
 
   const handleDataSize = (value) => {
     setSize(value);
     setPage(1);
   };
 
+  const handleDelete = async () => {
+    try {
+      await masterService.deleteParty(selectedData?._id)
+      setIsOpen("");
+      fetchData(page, size, search)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className="grid gap-4 lg:gap-6">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="h4-bold">{t("users.userList")}</h3>
-        <h4 className="h6-bold">{t("dashboard.totalUser")}: 14</h4>
+        <h3 className="h4-bold">{t("users.partyList")}</h3>
+        <h4 className="h6-bold">{t("dashboard.totalUser")}: {pagination?.total}</h4>
       </div>
 
       <Card className="p-4 grid gap-4 lg:gap-6 bg-mainBackground">
@@ -201,7 +70,10 @@ const Party = () => {
           </div>
           <div>
             <Button
-              onClick={() => setIsOpen("edit")}
+              onClick={() => {
+                setSelectedData('')
+                setIsOpen("add")
+              }}
               className="flex items-center gap-2"
             >
               <CircleFadingPlus className="size-5" />
@@ -212,20 +84,23 @@ const Party = () => {
 
         {/* User Data */}
         <div className="grid sm:grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
-          {userData.length > 0 ? (
-            userData.map((item, index) => (
+          {partyList.length > 0 ? (
+            partyList.map((item, index) => (
               <Card
                 key={item._id || index}
-                className="p-4"
+                className="p-4 relative"
               >
-                <div className="grid gap-4 overflow-hidden">
+                <div className="grid gap-4 overflow-hidden" onClick={() => {
+                  setIsOpen("add")
+                  setSelectedData(item)
+                }}>
                   <div className="flex sm:flex-col items-center gap-4">
                     <div className="h-10 w-10 sm:h-16 sm:w-16 rounded-full border border-border flex items-center justify-center">
-                      <span className="h5-bold !font-bold">PM</span>
+                      <span className="h5-bold !font-bold uppercase">{item?.name[0]}</span>
                     </div>
                     <div className="sm:text-center grid gap-1">
-                      <h4 className="h5-bold">{item.company}</h4>
-                      <p className="p-regular text-primary/70">{item.name}</p>
+                      <h4 className="h5-bold">{item?.contact_person}</h4>
+                      <p className="p-regular text-primary/70">{item?.name}</p>
                     </div>
                   </div>
                   <Separator />
@@ -233,16 +108,24 @@ const Party = () => {
                     <div className="flex items-center gap-1.5 whitespace-nowrap w-fit">
                       <Phone className="size-4 text-primary/50" />
                       <p className="p-regular text-primary/70 line-clamp-1">
-                        {item.mobile}
+                        {item?.mobile}
                       </p>
                     </div>
                     <div className="flex items-center gap-1.5 whitespace-nowrap w-fit">
                       <MapPin className="size-4 text-primary/50" />
                       <p className="p-regular text-primary/70 line-clamp-1">
-                        {item.address}
+                        {item?.address}
                       </p>
                     </div>
                   </div>
+                </div>
+                {/* Delete Icon */}
+                <div onClick={() => {
+                  setIsOpen("delete")
+                  setSelectedData(item)
+                }}
+                  className="absolute z-10 top-0 right-0 h-10 w-10 rounded-bl-full bg-destructive flex items-start justify-end p-1.5 cursor-pointer">
+                  <Trash2 className="text-white size-5" />
                 </div>
               </Card>
             ))
@@ -252,32 +135,34 @@ const Party = () => {
             </p>
           )}
         </div>
-      </Card>
+      </Card >
 
       <div className="flex items-center justify-between max-md:flex-col gap-4">
-        {totalUsers > size && (
-          <CommonPagination
-            currentPage={page}
-            totalPages={totalPages}
-            onPageChange={(newPage) => setPage(newPage)}
-            pageSize={size}
-            onPageSizeChange={handleDataSize}
-            className=""
-          />
-        )}
+
+        <CommonPagination
+          currentPage={page}
+          totalPages={pagination?.totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
+          pageSize={size}
+          onPageSizeChange={handleDataSize}
+          className=""
+        />
+
       </div>
 
       <Delete
         isOpen={isOpen === "delete"}
         setIsOpen={setIsOpen}
         isDelete={isOpen}
+        handleDelete={handleDelete}
       />
-      <EditParty
-        isOpen={isOpen === "edit"}
+      <AddEditParty
+        isOpen={isOpen === "add"}
         setIsOpen={setIsOpen}
         isEdit={isOpen}
+        selectedData={selectedData}
       />
-    </div>
+    </div >
   );
 };
 

@@ -13,17 +13,20 @@ const imagePlaceholder =
   "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=";
 
 const User = () => {
+
   const { t } = useTranslation("common");
   const [isOpen, setIsOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [search, setSearch] = useState("");
+  const [singleUser, setSingleUser] = useState(null)
   const [userList, setUserList] = useState([])
+  const [id, setId] = useState(null)
   const [pagination, setPagination] = useState({
     total: 0,
     totalPages: 0,
   });
-  
+
   const fetchUserData = async (page, size, search) => {
     const response = await userService.getUserList(page, size, search)
     if (response) {
@@ -34,12 +37,24 @@ const User = () => {
 
   useEffect(() => {
     fetchUserData(page, size, search)
-  }, [page, size, search])
+  }, [page, size, search, isOpen])
 
   const handleDataSize = (value) => {
     setSize(value);
     setPage(1);
   };
+
+  const handleEditOpen = (data) => {
+    setIsOpen("edit")
+    setSingleUser(data)
+  }
+
+  const deleteUser = async () => {
+    const response = await userService.deleteUser(id)
+    if (response) {
+      fetchUserData()
+    }
+  }
 
   return (
     <div className="grid gap-4 lg:gap-6">
@@ -70,8 +85,9 @@ const User = () => {
         <div className="grid sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
           {userList.length > 0 ? (
             userList.map((item, index) => (
-              <Card key={item._id || index} className="p-4 shadow-user_card relative overflow-hidden">
-                <div className="flex sm:flex-col items-center gap-4">
+              <Card key={item._id || index}
+                className="p-4 shadow-user_card relative overflow-hidden cursor-pointer" >
+                <div className="flex sm:flex-col items-center gap-4" onClick={() => handleEditOpen(item)}>
                   <div className="h-10 w-10 sm:h-16 sm:w-16 lg:h-24 lg:w-24 overflow-hidden rounded-lg">
                     <img
                       src={item?.img || imagePlaceholder}
@@ -86,49 +102,49 @@ const User = () => {
                 </div>
 
                 {/* Delete Icon */}
-                <div onClick={() => setIsOpen("delete")} className="absolute top-0 right-0 h-10 w-10 rounded-bl-full bg-destructive flex items-start justify-end p-1.5 cursor-pointer">
-                <Trash2 className="text-white size-5" />
+                <div onClick={() => {
+                  setId(item?._id)
+                  setIsOpen("delete")
+                }} className="absolute top-0 right-0 h-10 w-10 rounded-bl-full bg-destructive flex items-start justify-end p-1.5 cursor-pointer z-[50]">
+                  <Trash2 className="text-white size-5" />
                 </div>
               </Card>
             ))
           ) : (
             <div className="h-96">
-            <p className="text-center text-black/50 font-medium text-xl col-span-full">
-              {t("users.noUsersFound")}
-            </p>
+              <p className="text-center text-black/50 font-medium text-xl col-span-full">
+                {t("users.noUsersFound")}
+              </p>
             </div>
           )}
         </div>
       </Card>
 
       <div className="flex items-center justify-between max-md:flex-col gap-4">
-        
-          <CommonPagination
-            currentPage={page}
-            totalPages={pagination?.totalPages}
-            onPageChange={(newPage) => setPage(newPage)}
-            pageSize={size}
-            onPageSizeChange={handleDataSize}
-            className=""
-          />
-        
+
+        <CommonPagination
+          currentPage={page}
+          totalPages={pagination?.totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
+          pageSize={size}
+          onPageSizeChange={handleDataSize}
+          className=""
+        />
+
       </div>
 
-      <Delete
-        isOpen={isOpen === "delete"}
-        setIsOpen={setIsOpen}
-        isDelete={isOpen}
-      />
       <AddEditUser
         isOpen={isOpen === "edit"}
         setIsOpen={setIsOpen}
         isEdit={isOpen}
+        user={singleUser}
       />
 
       <Delete
         isOpen={isOpen === "delete"}
         setIsOpen={setIsOpen}
         isDelete={isOpen}
+        handleDelete={deleteUser}
       />
     </div>
   );

@@ -9,6 +9,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
+import { useSelector } from 'react-redux';
 
 const frameworks = [
   {
@@ -26,12 +27,15 @@ const frameworks = [
 ]
 
 const WorkDialog = () => {
-    const { t } = useTranslation("common");
- const [open, setOpen] = useState(false)
+
+  const { data, loading, error } = useSelector(state => state.dropdown)
+
+  const { t } = useTranslation("common");
+  const [open, setOpen] = useState(false)
   const [value, setValue] = useState("");
 
-    return (
-      <Popover open={open} onOpenChange={setOpen}>
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -40,18 +44,18 @@ const WorkDialog = () => {
           className="justify-between w-full"
         >
           {value
-            ? frameworks.find((framework) => framework.value === value)?.label
+            ? data?.data?.worktypes.find((framework) => framework.value === value)?.label
             : <>{t("selectWorkTypePlaceholder")}</>}
           <ChevronDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 lg:w-[367px]" align="start">
+      <PopoverContent className="p-0 lg:w-[367px] capitalize" align="start">
         <Command>
           <CommandInput placeholder="Search framework..." className="h-9" />
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {data?.data?.worktypes?.map((framework) => (
                 <CommandItem
                   key={framework.value}
                   value={framework.value}
@@ -74,7 +78,7 @@ const WorkDialog = () => {
         </Command>
       </PopoverContent>
     </Popover>
-    )
+  )
 }
 
 export default WorkDialog

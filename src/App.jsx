@@ -2,10 +2,18 @@ import { useTranslation } from "react-i18next";
 import "./App.css";
 import Router from "./router/router";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllDropdown } from "./store/slice/dropdown";
 
 function App() {
+
   const { t, i18n } = useTranslation("common");
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchAllDropdown())
+  }, [dispatch])
+
 
   useEffect(() => {
     if (!localStorage.getItem("language")) {

@@ -25,73 +25,76 @@ function isValidDate(date) {
   return !isNaN(date.getTime());
 }
 
-const DatePiker = () => {
+const DatePiker = ({ onChange }) => {
+
   const today = new Date();
 
-    const [open, setOpen] = useState(false);
-    const [date, setDate] = useState(new Date());
-    const [month, setMonth] = useState(date);
-    const [value, setValue] = useState(formatDate(date));
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState(new Date());
+  const [month, setMonth] = useState(date);
+  const [value, setValue] = useState(formatDate(date));
 
-    return (
-      <div className="flex flex-col gap-3">
-        <div className="relative flex gap-2">
-          <Input
-            id="date"
-            value={value}
-            placeholder="June 01, 2025"
-            className="bg-background pr-10"
-            onChange={(e) => {
-              const date = new Date(e.target.value);
-              setValue(e.target.value);
-              if (isValidDate(date)) {
-                setDate(date);
-                setMonth(date);
-              }
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "ArrowDown") {
-                e.preventDefault();
-                setOpen(true);
-              }
-            }}
-          />
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="relative flex gap-2">
+        <Input
+          id="date"
+          value={value}
+          placeholder="June 01, 2025"
+          className="bg-background pr-10"
+          onChange={(e) => {
+            const newdate = new Date(e.target.value);
+            onChange(newdate);
+            setValue(formatDate(newdate));
+            if (isValidDate(newdate)) {
+              setDate(newdate);
+              setMonth(newdate);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowDown") {
+              e.preventDefault();
+              setOpen(true);
+            }
+          }}
+        />
 
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                id="date-picker"
-                variant="ghost"
-                className="absolute top-1/2 right-2 size-6 -translate-y-1/2 !p-0"
-              >
-                <FaCalendarAlt className="size-4 !text-primary/70" />
-              </Button>
-            </PopoverTrigger>
-
-            <PopoverContent
-              className="w-auto overflow-hidden p-0"
-              align="end"
-              alignOffset={-8}
-              sideOffset={10}
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              id="date-picker"
+              variant="ghost"
+              className="absolute top-1/2 right-2 size-6 -translate-y-1/2 !p-0"
             >
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={(selectedDate) => {
-                  setDate(selectedDate);
-                  setValue(formatDate(selectedDate));
-                  setOpen(false);
-                }}
-                captionLayout="dropdown"
-                fromYear={1970}
-                toYear={2030}
-                defaultMonth={date}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
+              <FaCalendarAlt className="size-4 !text-primary/70" />
+            </Button>
+          </PopoverTrigger>
+
+          <PopoverContent
+            className="w-auto overflow-hidden p-0"
+            align="end"
+            alignOffset={-8}
+            sideOffset={10}
+          >
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={(selectedDate) => {
+                setDate(selectedDate);
+                setValue(formatDate(selectedDate));
+                onChange(formatDate(selectedDate));
+                setOpen(false);
+              }}
+              captionLayout="dropdown"
+              fromYear={1970}
+              toYear={2030}
+              defaultMonth={date}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
-    );
+    </div>
+  );
 }
 
 export default DatePiker

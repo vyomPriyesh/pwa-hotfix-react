@@ -1,9 +1,15 @@
 import serverCall from "../serverCall";
 
 // category master api function
-const getCategoryList = () => {
+const getCategoryList = (page, limit, search) => {
+     const payload = {
+        page: page,
+        limit: limit,
+        search: search
+    }
+
     try {
-        const response = serverCall.post('/ctg/all')
+        const response = serverCall.post('/ctg/all', payload)
         return response
     } catch (error) {
         throw error
@@ -30,7 +36,7 @@ const updateCategory = (id, payload) => {
 
 const deleteCategory = (id) => {
     try {
-        const response = serverCall.delete(`/ctg/update/${id}`)
+        const response = serverCall.delete(`/ctg/delete/${id}`)
         return response
     } catch (error) {
         throw error
@@ -46,10 +52,26 @@ const statusUpdateCategory = (id) => {
     }
 }
 
-// Party master api function
-const getPartyList = () => {
+// Work Type api funtion
+const addWorkType = (payload) => {
     try {
-        const response = serverCall.post('/party/all')
+        const response = serverCall.post('/worktype/add', payload)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
+// Party master api function
+const getPartyList = (page, limit, search) => {
+    const payload = {
+        page: page,
+        limit: limit,
+        search: search
+    }
+
+    try {
+        const response = serverCall.post('/party/all', payload)
         return response
     } catch (error) {
         throw error
@@ -65,7 +87,7 @@ const addParty = (payload) => {
     }
 }
 
-const updateParty= (id, payload) => {
+const updateParty = (id, payload) => {
     try {
         const response = serverCall.post(`/party/update/${id}`, payload)
         return response
@@ -76,7 +98,7 @@ const updateParty= (id, payload) => {
 
 const deleteParty = (id) => {
     try {
-        const response = serverCall.delete(`/party/update/${id}`)
+        const response = serverCall.delete(`/party/delete/${id}`)
         return response
     } catch (error) {
         throw error
@@ -98,14 +120,14 @@ const allDrodown = () => {
         const response = serverCall.get('/all-drop-down')
         return response
     } catch (error) {
-         throw error
+        throw error
     }
 }
 
 const masterService = {
     getCategoryList, addCategory, updateCategory, deleteCategory, statusUpdateCategory,
     getPartyList, addParty, updateParty, deleteParty, statusUpdateParty,
-    allDrodown
+    allDrodown, addWorkType
 }
 
 export default masterService

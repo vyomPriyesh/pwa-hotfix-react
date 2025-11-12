@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { useTranslation } from "react-i18next";
@@ -6,85 +6,116 @@ import CommonButton from "../../components/widgets/common_button";
 import CommonDialog from "../../components/widgets/common_dialog";
 import { Checkbox } from "../../components/ui/checkbox";
 import { ScrollArea } from "../../components/ui/scroll-area";
-import RoleDialog from "../../components/common/RoleDialog";
-import WorkDialog from "../../components/common/WorkDialog";
 import DatePiker from "../../components/common/DatePiker";
 import WorkType from "../../components/common/WorkType";
 import { Button } from "../../components/ui/button";
 import { CircleFadingPlus } from "lucide-react";
 import { CommonTextField } from "../../components/widgets/common_textField";
+import CommonDropdown from "../../components/widgets/common_dropdown";
+import CommonImgupload from "../../components/widgets/common_imgupload";
+
+import { useSelector } from "react-redux";
+import userService from "../../service/user.service";
 
 const AddEditUser = ({ user, isOpen, setIsOpen }) => {
+
   const { t } = useTranslation("common");
+  const { data, loading, error } = useSelector(state => state.dropdown)
 
   // 🔹 Form state
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    mobile: user?.mobile || "",
-    dob: user?.dob || null,
-    password: "",
-    confirmPassword: "",
-    role: user?.role || "",
-    workType: user?.workType || "",
-    fromTime: user?.fromTime || "",
-    toTime: user?.toTime || "",
-    options: {
-      one: false,
-      two: false,
-      three: false,
-    },
-  });
+  const [formData, setFormData] = useState({});
+  const [errors, setErrors] = useState({})
+  const [isWorkTypeOpen, setIsWorkTypeOpen] = useState(false);
 
-  // 🔹 Image upload state
-  const [profileImage, setProfileImage] = useState(
-    user?.profileImage ||
-      "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?semt=ais_hybrid&w=740&q=80"
-  );
+  useEffect(() => {
+    setFormData(user)
+  }, [user])
+
+  // {
+  //   name: user?.name || "",
+  //   profile_image: user?.profile_image || "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?semt=ais_hybrid&w=740&q=80",
+  //   email: user?.email || "",
+  //   mobile: user?.mobile || "",
+  //   date_of_birth: user?.date_of_birth || null,
+  //   password: "",
+  //   confirmPassword: "",
+  //   role: user?.role || "",
+  //   work_type: user?.work_type || "",
+  //   fromTime: user?.fromTime || "",
+  //   toTime: user?.toTime || "",
+  //   design_image: false,
+  //   challan_image: false,
+  // }
 
   // 🔹 Separate state for WorkType Dialog
-  const [isWorkTypeOpen, setIsWorkTypeOpen] = useState(false);
 
   // 🔹 Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: null }))
   };
 
   // 🔹 Handle checkbox changes
-  const handleCheckboxChange = (id) => {
-    setFormData((prev) => ({
-      ...prev,
-      options: {
-        ...prev.options,
-        [id]: !prev.options[id],
-      },
-    }));
-  };
-
-  // 🔹 Handle image upload
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
-      setFormData((prev) => ({ ...prev, profileFile: file }));
-    }
+  const handleCheckboxChange = (name) => {
+    setFormData((prev) => ({ ...prev, [name]: !prev[name], }));
   };
 
   // 🔹 Handle date change from DatePicker
   const handleDateChange = (date) => {
-    setFormData((prev) => ({ ...prev, dob: date }));
+    setFormData((prev) => ({ ...prev, date_of_birth: date }));
   };
 
   // 🔹 Handle submit
-  const handleSubmit = () => {
-    console.log("Form Submitted:", formData);
-    setIsOpen("");
+  const handleSubmit = async () => {
+    let newErrors = {}
+    if (!formData?.name) {
+      newErrors.name = 'Name is Required'
+    }
+    if (!formData?.email) {
+      newErrors.email = 'Email is Required'
+    }
+    if (!formData?.mobile) {
+      newErrors.mobile = 'Mobile is Required'
+    }
+    if (!formData?._id) {
+      if (!formData?.password) {
+        newErrors.password = 'Password is Required'
+      }
+      if (formData?.password || formData?.confirmPassword) {
+        if (formData?.password !== formData?.confirmPassword) {
+          newErrors.password = 'Password Not Match'
+          newErrors.confirmPassword = 'Confirm Password Not Match'
+        }
+      }
+    }
+    if (!formData?.work_type) {
+      newErrors.work_type = 'Work Type is Required'
+    }
+    if (!formData?.role) {
+      newErrors.role = 'Role is Required'
+    }
+    setErrors(newErrors)
+    if (Object.keys(newErrors).length === 0) {
+      let api
+      if (formData?._id) {
+        api = userService.updateUser(formData?._id, formData)
+      } else {
+        api = userService.addUser(formData)
+      }
+      const response = await api
+      if (response) {
+        setFormData({})
+        setIsOpen("")
+        setErrors({})
+      }
+
+    }
   };
 
   // 🔹 Handle cancel
   const handleCancel = () => {
+    setFormData({})
     setIsOpen("");
   };
 
@@ -92,6 +123,23 @@ const AddEditUser = ({ user, isOpen, setIsOpen }) => {
   const handleAddWorkType = () => {
     setIsWorkTypeOpen(true);
   };
+
+  const roles = [
+    {
+      value: "admin",
+      label: "Admin",
+    },
+    {
+      value: "work",
+      label: "Job Work",
+    },
+    {
+      value: "tempo",
+      label: "Tempo Driver",
+    },
+  ]
+
+  console.log(formData)
 
   return (
     <>
@@ -115,112 +163,90 @@ const AddEditUser = ({ user, isOpen, setIsOpen }) => {
             {/* Profile Image Upload */}
             <div className="grid gap-3 col-span-2 mx-auto text-center">
               <Label>{t("users.image")}</Label>
-              <Label
-                htmlFor="profiles"
-                className="h-16 w-16 lg:h-20 lg:w-20 xxl:h-24 xxl:w-24 overflow-hidden border border-border rounded-md cursor-pointer flex items-center justify-center"
-              >
-                <img
-                  src={profileImage}
-                  alt="Profile"
-                  className="w-full h-full object-cover bg-center"
-                />
-              </Label>
-              <Input
-                type="file"
-                id="profiles"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload}
-              />
+
+              <CommonImgupload value={formData?.profile_image} onChange={(e) => setFormData(prev => ({ ...prev, profile_image: e }))} />
             </div>
 
             {/* Name */}
             <div className="grid gap-2">
-              <Label>{t("users.name")}</Label>
-              <Input
+              <CommonTextField label={t("users.name")}
                 type="text"
                 name="name"
-                value={formData.name}
-                placeholder={t("usernamePlaceholder")}
+                value={formData?.name}
                 onChange={handleChange}
+                placeholder={t("usernamePlaceholder")}
+                error={errors?.name}
               />
             </div>
 
             {/* Email */}
             <div className="grid gap-2">
-              <Label>{t("users.email")}</Label>
-              <Input
+              <CommonTextField label={t("users.email")}
                 type="email"
                 name="email"
-                value={formData.email}
-                placeholder={t("emailPlaceholder")}
+                value={formData?.email}
                 onChange={handleChange}
+                placeholder={t("emailPlaceholder")}
+                error={errors?.email}
               />
             </div>
 
             {/* Mobile */}
             <div className="grid gap-2">
-              <Label>{t("users.mobile")}</Label>
-              <Input
+              <CommonTextField label={t("users.email")}
                 type="number"
                 name="mobile"
-                value={formData.mobile}
+                value={formData?.mobile}
                 placeholder={t("mobilePlaceholder")}
                 onChange={handleChange}
+                error={errors?.mobile}
               />
             </div>
 
             {/* Date of Birth */}
             <div className="grid gap-2">
               <Label>{t("users.dob")}</Label>
-              <DatePiker value={formData.dob} onChange={handleDateChange} />
+              <DatePiker value={formData?.date_of_birth} onChange={handleDateChange} />
             </div>
+            {!formData?._id &&
+              <>
 
-            {/* Password */}
-            <div className="grid gap-2">
-              <CommonTextField  label={t("password")}
-                  type="password"
-                  name="password"
-                  // value={formik.values.password}
-                  // onChange={formik.handleChange}
-                  // onBlur={formik.handleBlur}
-                  placeholder={t("passwordPlaceholder")}
-                  // isPassword
-                  // error={formik.touched.password && formik.errors.password} 
+                {/* Password */}
+                <div className="grid gap-2">
+                  <CommonTextField label={t("password")}
+                    type="password"
+                    name="password"
+                    value={formData?.password}
+                    onChange={handleChange}
+                    placeholder={t("passwordPlaceholder")}
+                    isPassword
+                    error={errors?.password}
                   />
-            </div>
-            <div className="grid gap-2">
-              <CommonTextField  label={t("confirmPassword")}
-                  type="password"
-                  name="password"
-                  // value={formik.values.password}
-                  // onChange={formik.handleChange}
-                  // onBlur={formik.handleBlur}
-                  placeholder={t("confirmPasswordPlaceholder")}
-                  // isPassword
-                  // error={formik.touched.password && formik.errors.password} 
+                </div>
+                <div className="grid gap-2">
+                  <CommonTextField label={t("confirmPassword")}
+                    type="password"
+                    name="confirmPassword"
+                    value={formData?.confirmPassword}
+                    onChange={handleChange}
+                    placeholder={t("confirmPasswordPlaceholder")}
+                    isPassword
+                    error={errors?.confirmPassword}
                   />
-            </div>
-
+                </div>
+              </>
+            }
             {/* Role */}
             <div className="grid gap-2">
               <Label>{t("users.role")}</Label>
-              <RoleDialog
-                selected={formData.role}
-                onSelect={(role) => setFormData((p) => ({ ...p, role }))}
-              />
+              <CommonDropdown placeholder={t("selectRolePlaceholder")} error={errors?.role} options={roles} value={formData?.role} onSelect={(role) => setFormData((p) => ({ ...p, role }))} />
             </div>
 
             {/* Work Type */}
             <div className="grid gap-2">
               <Label>{t("users.workType")}</Label>
               <div className="grid grid-cols-[auto,40px] gap-2">
-                <WorkDialog
-                  selected={formData.workType}
-                  onSelect={(workType) =>
-                    setFormData((p) => ({ ...p, workType }))
-                  }
-                />
+                <CommonDropdown placeholder={t("selectWorkTypePlaceholder")} error={errors?.work_type} options={data?.data?.worktypes} value={formData?.work_type} onSelect={(work_type) => setFormData((p) => ({ ...p, work_type }))} />
                 <Button
                   type="button"
                   onClick={handleAddWorkType}
@@ -232,41 +258,50 @@ const AddEditUser = ({ user, isOpen, setIsOpen }) => {
             </div>
 
             {/* Checkboxes */}
-            {["one", "two", "three"].map((key) => (
-              <div
-                key={key}
-                className="flex items-center gap-2 col-span-2 h-10 border border-border rounded-md px-3"
-              >
-                <Checkbox
-                  id={key}
-                  checked={formData.options[key]}
-                  onCheckedChange={() => handleCheckboxChange(key)}
-                />
-                <Label className="cursor-pointer" htmlFor={key}>
-                  {t("users.hideChallange")}
-                </Label>
-              </div>
-            ))}
+            <div
+              className="flex items-center gap-2 col-span-2 h-10 border border-border rounded-md px-3"
+            >
+              <Checkbox
+                id={'design_image'}
+                checked={formData?.design_image}
+                onCheckedChange={() => handleCheckboxChange('design_image')}
+              />
+              <Label className="cursor-pointer" htmlFor={'design_image'}>
+                {t("users.hideChallange")}
+              </Label>
+            </div>
+            <div
+              className="flex items-center gap-2 col-span-2 h-10 border border-border rounded-md px-3"
+            >
+              <Checkbox
+                id={'challan_image'}
+                checked={formData?.challan_image}
+                onCheckedChange={() => handleCheckboxChange('challan_image')}
+              />
+              <Label className="cursor-pointer" htmlFor={'challan_image'}>
+                {t("users.hideChallange")}
+              </Label>
+            </div>
 
             {/* Time */}
             <div className="grid gap-2">
-              <Label>{t("users.fromTime")}</Label>
-              <Input
+              <CommonTextField label={t("users.fromTime")}
                 type="text"
-                name="fromTime"
+                name="work_from"
                 placeholder="HH:MM:SS"
-                value={formData.fromTime}
+                value={formData?.work_from}
                 onChange={handleChange}
+                error={errors?.work_from}
               />
             </div>
             <div className="grid gap-2">
-              <Label>{t("users.toTime")}</Label>
-              <Input
+              <CommonTextField label={t("users.toTime")}
                 type="text"
-                name="toTime"
+                name="work_to"
                 placeholder="HH:MM:SS"
-                value={formData.toTime}
+                value={formData?.work_to}
                 onChange={handleChange}
+                error={errors?.work_to}
               />
             </div>
           </div>
