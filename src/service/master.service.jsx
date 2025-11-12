@@ -1,9 +1,15 @@
 import serverCall from "../serverCall";
 
 // category master api function
-const getCategoryList = () => {
+const getCategoryList = (page, limit, search) => {
+     const payload = {
+        page: page,
+        limit: limit,
+        search: search
+    }
+
     try {
-        const response = serverCall.post('/ctg/all')
+        const response = serverCall.post('/ctg/all', payload)
         return response
     } catch (error) {
         throw error
@@ -30,7 +36,7 @@ const updateCategory = (id, payload) => {
 
 const deleteCategory = (id) => {
     try {
-        const response = serverCall.delete(`/ctg/update/${id}`)
+        const response = serverCall.delete(`/ctg/delete/${id}`)
         return response
     } catch (error) {
         throw error
@@ -92,7 +98,7 @@ const updateParty = (id, payload) => {
 
 const deleteParty = (id) => {
     try {
-        const response = serverCall.delete(`/party/update/${id}`)
+        const response = serverCall.delete(`/party/delete/${id}`)
         return response
     } catch (error) {
         throw error

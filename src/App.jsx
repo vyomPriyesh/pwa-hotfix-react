@@ -37,6 +37,7 @@ function App() {
   return (
     <>
       <Router isLoggedIn={isLoggedIn} />
+      <div className="sticky bottom-0 left-0 z-50 w-full bg-black text-white text-center md:hidden">Denish</div>
     </>
   );
 }
