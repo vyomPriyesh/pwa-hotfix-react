@@ -45,6 +45,7 @@ const Party = () => {
     try {
       await masterService.deleteParty(selectedData?._id)
       setIsOpen("");
+      fetchData(page, size, search)
     } catch (error) {
       console.log(error);
     }

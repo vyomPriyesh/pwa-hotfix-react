@@ -34,16 +34,17 @@ const Category = () => {
   useEffect(() => {
     fetchData(page, size, search)
   }, [page, size, search, isOpen])
-
+  
   const handleDataSize = (value) => {
     setSize(value);
     setPage(1);
   };
-
+  
   const handleDelete = async () => {
     try {
       await masterService.deleteCategory(selectedData?._id)
       setIsOpen("");
+      fetchData(page, size, search)
     } catch (error) {
       console.log(error);
     }
