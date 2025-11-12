@@ -23,7 +23,7 @@ const CommonDialog = ({
   const sizeClasses = {
     sm: "max-w-[calc(100vw-32px)] sm:max-w-[425px]",
     default: "max-w-[calc(100vw-32px)] sm:max-w-[600px]",
-    lg: "max-w-[calc(100vw-32px)] sm:max-w-[800px]",
+    lg: "max-w-[calc(100vw-32px)] sm:max-w-[800px] max-sm:px-2.5",
     xl: "max-w-[calc(100vw-32px)] sm:max-w-[1000px]",
   };
 
