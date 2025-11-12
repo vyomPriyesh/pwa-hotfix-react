@@ -101,6 +101,7 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
     designNo: Yup.string().required("Design No is required"),
     category: Yup.string().required("Category is required"),
     party: Yup.string().required("Party Name is required"),
+    notes: Yup.string().required("notes is required"),
     labours: Yup.array()
       .of(
         Yup.object({
@@ -132,6 +133,18 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
             sareePatti: Yup.string().required("sareePatti required"),
             netPaper: Yup.string().required("netPaper required"),
             image: Yup.mixed().nullable().required("Please upload image."),
+          })
+        ),
+    }),
+    stones: Yup.array().when("advance", {
+      is: true,
+      then: (schema) =>
+        schema.of(
+          Yup.object({
+            type: Yup.string().required("type required"),
+            size: Yup.string().required("size required"),
+            color: Yup.string().required("color required"),
+            price: Yup.string().required("price required")
           })
         ),
     }),
@@ -634,45 +647,105 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
 
                 {/* Stone */}
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="flex items-center justify-between gap-3 col-span-4">
-                    <h5 className="h5-bold lg:text-lg ">
-                      {t("design.stoneDetail")}
-                    </h5>
-                    <CommonButton
-                      type="button"
-                      className="flex items-center justify-center p-0 w-10 h-10"
-                    >
-                      <CircleFadingPlus className="size-5" />
-                    </CommonButton>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.type")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.type")}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.size")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.size")}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.color")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.color")}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.price")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.price")}
-                    />
-                  </div>
+                  {formik.values.stones.map((sto, i) => {
+                    const typeTouched = getIn(formik.touched, `stones[${i}].type`);
+                    const typeError = getIn(formik.errors, `stones[${i}].type`);
+                    const sizeTouched = getIn(formik.touched, `stones[${i}].size`);
+                    const sizeError = getIn(formik.errors, `stones[${i}].size`);
+                    const colorTouched = getIn(formik.touched, `stones[${i}].color`);
+                    const colorError = getIn(formik.errors, `stones[${i}].color`);
+                    const priceTouched = getIn(formik.touched, `stones[${i}].price`);
+                    const priceError = getIn(formik.errors, `stones[${i}].price`);
+
+                    return (
+                      <>
+                        <div className="flex items-center justify-between gap-3 col-span-4">
+                          <h5 className="h5-bold lg:text-lg ">
+                            {t("design.stoneDetail")}
+                          </h5>
+                          <CommonButton
+                            type="button"
+                            className="flex items-center justify-center p-0 w-10 h-10"
+                            onClick={() =>
+                              formik.setFieldValue("stones", [
+                                ...formik.values.stones,
+                                { type: "", size: "", color: "", price: "" },
+                              ])
+                            }
+                          >
+                            <CircleFadingPlus className="size-5" />
+                          </CommonButton>
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>{t("design.type")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.type")}
+                            name={`stones[${i}].type`}
+                            value={sto.type}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                          />
+                          {typeTouched && typeError && (
+                            <p className="text-red-500 text-sm mt-1">{typeError}</p>
+                          )}
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>{t("design.size")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.size")}
+                            name={`stones[${i}].size`}
+                            value={sto.size}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                          />
+                          {sizeTouched && sizeError && (
+                            <p className="text-red-500 text-sm mt-1">{sizeError}</p>
+                          )}
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>{t("design.color")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.color")}
+                            name={`stones[${i}].color`}
+                            value={sto.color}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                          />
+                          {colorTouched && colorError && (
+                            <p className="text-red-500 text-sm mt-1">{colorError}</p>
+                          )}
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>{t("design.price")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.price")}
+                            name={`stones[${i}].price`}
+                            value={sto.item}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                          />
+                          {priceTouched && priceError && (
+                            <p className="text-red-500 text-sm mt-1">{priceError}</p>
+                          )}
+                        </div>
+
+                        {formik.values.stones.length > 1 && (
+                          <div className="flex items-center justify-center h-10 w-10 p-0 rounded-lg bg-destructive cursor-pointer"
+                            onClick={() => {
+                              const updated = formik.values.stones.filter((_, idx) => idx !== i);
+                              formik.setFieldValue("stones", updated);
+                            }}
+                          >
+                            <Trash2 className="text-white size-5" />
+                          </div>
+                        )}
+                      </>
+                    )
+                  })}
                   <div className="col-span-4 flex items-center gap-3 justify-end">
                     <h6 className="h6-bold">{t("design.totalPrice")} :</h6>
                     <h6 className="h6-regular">₹00.00</h6>
@@ -680,33 +753,105 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
                 </div>
               </>
             )}
+
             <Separator />
             {/* Labour */}
             <h5 className="h5-bold lg:text-lg">{t("design.labor")}</h5>
-            <div className="grid grid-cols-[auto,130px,40px] items-end gap-3">
-              <div className="grid gap-2">
-                <Label>{t("users.name")}</Label>
-                <CommonTextField type="text" placeholder={t("users.name")} />
-              </div>
-              <div className="grid gap-2">
-                <Label>{t("design.price")}</Label>
-                <CommonTextField type="text" placeholder={t("design.price")} />
-              </div>
+            {formik.values.labours.map((lab, i) => {
+              const nameTouched = getIn(formik.touched, `labours[${i}].name`);
+              const nameError = getIn(formik.errors, `labours[${i}].name`);
+              const priceTouched = getIn(formik.touched, `labours[${i}].price`);
+              const priceError = getIn(formik.errors, `labours[${i}].price`);
+
+              return (
+                <div className="grid grid-cols-[auto,130px,40px] items-end gap-3">
+                  <div className="grid gap-2">
+                    <Label>{t("users.name")}</Label>
+                    <CommonTextField
+                      type="text"
+                      placeholder={t("users.name")}
+                      name={`labours[${i}].name`}
+                      value={lab.name}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    />
+                    {nameTouched && nameError && (
+                      <p className="text-red-500 text-sm mt-1">{nameError}</p>
+                    )}
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>{t("design.price")}</Label>
+                    <CommonTextField
+                      type="text"
+                      placeholder={t("design.price")}
+                      name={`labours[${i}].price`}
+                      value={lab.price}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    />
+                    {priceTouched && priceError && (
+                      <p className="text-red-500 text-sm mt-1">{priceError}</p>
+                    )}
+                  </div>
+                  {formik.values.labours.length > 1 ? (
+                    <div className="flex items-center justify-center h-10 w-10 p-0 rounded-lg bg-destructive cursor-pointer"
+                      onClick={() => {
+                        const updated = formik.values.labours.filter((_, idx) => idx !== i);
+                        formik.setFieldValue("labours", updated);
+                      }}
+                    >
+                      <Trash2 className="text-white size-5" />
+                    </div>
+                  ) : (
+                    <CommonButton
+                      type="button"
+                      className="flex items-center justify-center p-0 w-10 h-10"
+                      onClick={() =>
+                        formik.setFieldValue("labours", [
+                          ...formik.values.labours,
+                          { name: "", price: "" },
+                        ])
+                      }
+                    >
+                      <CircleFadingPlus className="size-5" />
+                    </CommonButton>
+                  )}
+                </div>
+              )
+            })}
+            {formik.values.labours.length > 1 && (
               <CommonButton
                 type="button"
                 className="flex items-center justify-center p-0 w-10 h-10"
+                onClick={() =>
+                  formik.setFieldValue("labours", [
+                    ...formik.values.labours,
+                    { name: "", price: "" },
+                  ])
+                }
               >
                 <CircleFadingPlus className="size-5" />
               </CommonButton>
-            </div>
+            )}
             <div className="col-span-3 flex items-center gap-3 justify-end">
               <h6 className="h6-bold">{t("design.finalAmount")} :</h6>
               <h6 className="h6-regular">₹00.00</h6>
             </div>
             <Separator />
+
             <div className="grid gap-2">
               <Label>{t("design.notes")}</Label>
-              <Textarea type="text" placeholder={t("design.notes")} />
+              <Textarea
+                type="text"
+                placeholder={t("design.notes")}
+                name="notes"
+                value={formik.values.notes}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.notes && formik.errors.notes && (
+                <p className="text-red-500 text-sm mt-1">{formik.errors.notes}</p>
+              )}
             </div>
           </form>
         </ScrollArea>
