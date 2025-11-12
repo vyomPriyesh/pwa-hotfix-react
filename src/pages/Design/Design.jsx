@@ -5,6 +5,7 @@ import { CommonTextField } from "../../components/widgets/common_textField";
 import { CircleFadingPlus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import AddEditDesign from "./AddEditDesign";
+import Delete from "../../components/common/Delete";
 
 const designListData = [
   {
@@ -97,12 +98,12 @@ const Design = () => {
                   </div>
 
                 {/* Delete Icon */}
-                {/* <div
+                <div
                   onClick={() => setIsOpen("delete")}
                   className="absolute top-0 right-0 h-10 w-10 rounded-bl-full bg-destructive flex items-start justify-end p-1.5 cursor-pointer"
                 >
                   <Trash2 className="text-white size-5" />
-                </div> */}
+                </div>
               </Card>
             ))
           ) : (

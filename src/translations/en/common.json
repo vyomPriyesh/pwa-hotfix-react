@@ -23,7 +23,8 @@
     "user": "User",
     "party": "Party",
     "category": "Category",
-    "design": "Design"
+    "design": "Design",
+    "chalan": "Challan"
   },
   "auth": {
     "signInToYourAccount": "Sign in to your account",
@@ -126,6 +127,24 @@
     "amount":"Amount",
     "finalAmount":"Final Amount",
     "notes" : "Notes"
+  },
+
+  "challan": {
+    "in":"Challan IN",
+    "out":"Challan OUT",
+    "challanNo":"Challan No",
+    "cPerson":"CPerson",
+    "piece":"Piece",
+    "jobNo":"Job No",
+    "mallImage":"Mall Image",
+    "challanImage":"Challan Image",
+    "mall":"Mall Type",
+    "regular":"Regular",
+    "rf":"RF",
+    "totalMall":"Total Mall",
+    "meter":"Meter",
+    "company":"Company",
+    "carrierPerson":"Carrier Person"
   },
 
   "deleteDialog": {
