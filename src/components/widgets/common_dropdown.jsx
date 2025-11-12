@@ -9,7 +9,7 @@ import {
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
 
-const CommonDropdown = ({ value, placeholder, options, onSelect }) => {
+const CommonDropdown = ({ value, placeholder, options, onSelect, error }) => {
 
     const [open, setOpen] = useState(false)
 
@@ -19,46 +19,50 @@ const CommonDropdown = ({ value, placeholder, options, onSelect }) => {
     }
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-                <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="justify-between w-full"
-                >
-                    {value
-                        ? options.find((framework) => framework.value === value)?.label
-                        : <>{placeholder}</>}
-                    <ChevronDown className="opacity-50" />
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="p-0 lg:w-[367px] capitalize" align="start">
-                <Command>
-                    <CommandInput placeholder="Search framework..." className="h-9" />
-                    <CommandList>
-                        <CommandEmpty>Data Not Found</CommandEmpty>
-                        <CommandGroup>
-                            {options?.map((framework) => (
-                                <CommandItem
-                                    key={framework.value}
-                                    value={framework.value}
-                                    onSelect={handleChange}
-                                >
-                                    {framework.label}
-                                    <Check
-                                        className={cn(
-                                            "ml-auto",
-                                            value === framework.value ? "opacity-100" : "opacity-0"
-                                        )}
-                                    />
-                                </CommandItem>
-                            ))}
-                        </CommandGroup>
-                    </CommandList>
-                </Command>
-            </PopoverContent>
-        </Popover>
+        <div className="">
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                    <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="justify-between w-full"
+                    >
+                        {value
+                            ? options.find((framework) => framework.value === value)?.label
+                            : <>{placeholder}</>}
+                        <ChevronDown className="opacity-50" />
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-0 lg:w-[367px] capitalize" align="start">
+                    <Command>
+                        <CommandInput placeholder="Search framework..." className="h-9" />
+                        <CommandList>
+                            <CommandEmpty>Data Not Found</CommandEmpty>
+                            <CommandGroup>
+                                {options?.map((framework) => (
+                                    <CommandItem
+                                        key={framework.value}
+                                        value={framework.value}
+                                        onSelect={handleChange}
+                                    >
+                                        {framework.label}
+                                        <Check
+                                            className={cn(
+                                                "ml-auto",
+                                                value === framework.value ? "opacity-100" : "opacity-0"
+                                            )}
+                                        />
+                                    </CommandItem>
+                                ))}
+                            </CommandGroup>
+                        </CommandList>
+                    </Command>
+                </PopoverContent>
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            </Popover>
+        </div>
+
     )
 }
 

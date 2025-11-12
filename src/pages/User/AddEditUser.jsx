@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,7 @@ import CommonDropdown from "../../components/widgets/common_dropdown";
 import CommonImgupload from "../../components/widgets/common_imgupload";
 
 import { useSelector } from "react-redux";
+import userService from "../../service/user.service";
 
 const AddEditUser = ({ user, isOpen, setIsOpen }) => {
 
@@ -22,53 +23,51 @@ const AddEditUser = ({ user, isOpen, setIsOpen }) => {
   const { data, loading, error } = useSelector(state => state.dropdown)
 
   // 🔹 Form state
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    profile_image: user?.profile_image || "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?semt=ais_hybrid&w=740&q=80",
-    email: user?.email || "",
-    mobile: user?.mobile || "",
-    dob: user?.dob || null,
-    password: "",
-    confirmPassword: "",
-    role: user?.role || "",
-    work_type: user?.work_type || "",
-    fromTime: user?.fromTime || "",
-    toTime: user?.toTime || "",
-    options: {
-      one: false,
-      two: false,
-      three: false,
-    },
-  });
+  const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({})
+  const [isWorkTypeOpen, setIsWorkTypeOpen] = useState(false);
+
+  useEffect(() => {
+    setFormData(user)
+  }, [user])
+
+  // {
+  //   name: user?.name || "",
+  //   profile_image: user?.profile_image || "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?semt=ais_hybrid&w=740&q=80",
+  //   email: user?.email || "",
+  //   mobile: user?.mobile || "",
+  //   date_of_birth: user?.date_of_birth || null,
+  //   password: "",
+  //   confirmPassword: "",
+  //   role: user?.role || "",
+  //   work_type: user?.work_type || "",
+  //   fromTime: user?.fromTime || "",
+  //   toTime: user?.toTime || "",
+  //   design_image: false,
+  //   challan_image: false,
+  // }
 
   // 🔹 Separate state for WorkType Dialog
-  const [isWorkTypeOpen, setIsWorkTypeOpen] = useState(false);
 
   // 🔹 Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: null }))
   };
 
   // 🔹 Handle checkbox changes
-  const handleCheckboxChange = (id) => {
-    setFormData((prev) => ({
-      ...prev,
-      options: {
-        ...prev.options,
-        [id]: !prev.options[id],
-      },
-    }));
+  const handleCheckboxChange = (name) => {
+    setFormData((prev) => ({ ...prev, [name]: !prev[name], }));
   };
 
   // 🔹 Handle date change from DatePicker
   const handleDateChange = (date) => {
-    setFormData((prev) => ({ ...prev, dob: date }));
+    setFormData((prev) => ({ ...prev, date_of_birth: date }));
   };
 
   // 🔹 Handle submit
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let newErrors = {}
     if (!formData?.name) {
       newErrors.name = 'Name is Required'
@@ -79,17 +78,44 @@ const AddEditUser = ({ user, isOpen, setIsOpen }) => {
     if (!formData?.mobile) {
       newErrors.mobile = 'Mobile is Required'
     }
-    if (!formData?.password) {
-      newErrors.password = 'Password is Required'
+    if (!formData?._id) {
+      if (!formData?.password) {
+        newErrors.password = 'Password is Required'
+      }
+      if (formData?.password || formData?.confirmPassword) {
+        if (formData?.password !== formData?.confirmPassword) {
+          newErrors.password = 'Password Not Match'
+          newErrors.confirmPassword = 'Confirm Password Not Match'
+        }
+      }
     }
     if (!formData?.work_type) {
       newErrors.work_type = 'Work Type is Required'
     }
+    if (!formData?.role) {
+      newErrors.role = 'Role is Required'
+    }
     setErrors(newErrors)
+    if (Object.keys(newErrors).length === 0) {
+      let api
+      if (formData?._id) {
+        api = userService.updateUser(formData?._id, formData)
+      } else {
+        api = userService.addUser(formData)
+      }
+      const response = await api
+      if (response) {
+        setFormData({})
+        setIsOpen("")
+        setErrors({})
+      }
+
+    }
   };
 
   // 🔹 Handle cancel
   const handleCancel = () => {
+    setFormData({})
     setIsOpen("");
   };
 
@@ -112,6 +138,8 @@ const AddEditUser = ({ user, isOpen, setIsOpen }) => {
       label: "Tempo Driver",
     },
   ]
+
+  console.log(formData)
 
   return (
     <>
@@ -168,7 +196,7 @@ const AddEditUser = ({ user, isOpen, setIsOpen }) => {
               <CommonTextField label={t("users.email")}
                 type="number"
                 name="mobile"
-                value={formData.mobile}
+                value={formData?.mobile}
                 placeholder={t("mobilePlaceholder")}
                 onChange={handleChange}
                 error={errors?.mobile}
@@ -178,44 +206,47 @@ const AddEditUser = ({ user, isOpen, setIsOpen }) => {
             {/* Date of Birth */}
             <div className="grid gap-2">
               <Label>{t("users.dob")}</Label>
-              <DatePiker value={formData.dob} onChange={handleDateChange} />
+              <DatePiker value={formData?.date_of_birth} onChange={handleDateChange} />
             </div>
+            {!formData?._id &&
+              <>
 
-            {/* Password */}
-            <div className="grid gap-2">
-              <CommonTextField label={t("password")}
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder={t("passwordPlaceholder")}
-                isPassword
-                error={errors?.password}
-              />
-            </div>
-            <div className="grid gap-2">
-              <CommonTextField label={t("confirmPassword")}
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder={t("confirmPasswordPlaceholder")}
-                isPassword
-                error={errors?.confirmPassword}
-              />
-            </div>
-
+                {/* Password */}
+                <div className="grid gap-2">
+                  <CommonTextField label={t("password")}
+                    type="password"
+                    name="password"
+                    value={formData?.password}
+                    onChange={handleChange}
+                    placeholder={t("passwordPlaceholder")}
+                    isPassword
+                    error={errors?.password}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <CommonTextField label={t("confirmPassword")}
+                    type="password"
+                    name="confirmPassword"
+                    value={formData?.confirmPassword}
+                    onChange={handleChange}
+                    placeholder={t("confirmPasswordPlaceholder")}
+                    isPassword
+                    error={errors?.confirmPassword}
+                  />
+                </div>
+              </>
+            }
             {/* Role */}
             <div className="grid gap-2">
               <Label>{t("users.role")}</Label>
-              <CommonDropdown placeholder={t("selectRolePlaceholder")} options={roles} value={formData.role} onSelect={(role) => setFormData((p) => ({ ...p, role }))} />
+              <CommonDropdown placeholder={t("selectRolePlaceholder")} error={errors?.role} options={roles} value={formData?.role} onSelect={(role) => setFormData((p) => ({ ...p, role }))} />
             </div>
 
             {/* Work Type */}
             <div className="grid gap-2">
               <Label>{t("users.workType")}</Label>
               <div className="grid grid-cols-[auto,40px] gap-2">
-                <CommonDropdown placeholder={t("selectWorkTypePlaceholder")} options={data?.data?.work_type} value={formData.work_type} onSelect={(work_type) => setFormData((p) => ({ ...p, work_type }))} />
+                <CommonDropdown placeholder={t("selectWorkTypePlaceholder")} error={errors?.work_type} options={data?.data?.worktypes} value={formData?.work_type} onSelect={(work_type) => setFormData((p) => ({ ...p, work_type }))} />
                 <Button
                   type="button"
                   onClick={handleAddWorkType}
@@ -227,21 +258,30 @@ const AddEditUser = ({ user, isOpen, setIsOpen }) => {
             </div>
 
             {/* Checkboxes */}
-            {["one", "two"].map((key) => (
-              <div
-                key={key}
-                className="flex items-center gap-2 col-span-2 h-10 border border-border rounded-md px-3"
-              >
-                <Checkbox
-                  id={key}
-                  checked={formData.options[key]}
-                  onCheckedChange={() => handleCheckboxChange(key)}
-                />
-                <Label className="cursor-pointer" htmlFor={key}>
-                  {t("users.hideChallange")}
-                </Label>
-              </div>
-            ))}
+            <div
+              className="flex items-center gap-2 col-span-2 h-10 border border-border rounded-md px-3"
+            >
+              <Checkbox
+                id={'design_image'}
+                checked={formData?.design_image}
+                onCheckedChange={() => handleCheckboxChange('design_image')}
+              />
+              <Label className="cursor-pointer" htmlFor={'design_image'}>
+                {t("users.hideChallange")}
+              </Label>
+            </div>
+            <div
+              className="flex items-center gap-2 col-span-2 h-10 border border-border rounded-md px-3"
+            >
+              <Checkbox
+                id={'challan_image'}
+                checked={formData?.challan_image}
+                onCheckedChange={() => handleCheckboxChange('challan_image')}
+              />
+              <Label className="cursor-pointer" htmlFor={'challan_image'}>
+                {t("users.hideChallange")}
+              </Label>
+            </div>
 
             {/* Time */}
             <div className="grid gap-2">
@@ -249,7 +289,7 @@ const AddEditUser = ({ user, isOpen, setIsOpen }) => {
                 type="text"
                 name="work_from"
                 placeholder="HH:MM:SS"
-                value={formData.work_from}
+                value={formData?.work_from}
                 onChange={handleChange}
                 error={errors?.work_from}
               />
@@ -259,7 +299,7 @@ const AddEditUser = ({ user, isOpen, setIsOpen }) => {
                 type="text"
                 name="work_to"
                 placeholder="HH:MM:SS"
-                value={formData.work_to}
+                value={formData?.work_to}
                 onChange={handleChange}
                 error={errors?.work_to}
               />
