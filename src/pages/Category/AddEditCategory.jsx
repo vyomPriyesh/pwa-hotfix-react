@@ -68,7 +68,7 @@ const AddEditCategory = ({ user, isOpen, setIsOpen, selectedData = '' }) => {
       title={isEdit ? "Update Category" : "Create Category"}
       footer={
         <div className="flex gap-2">
-          <CommonButton variant="outline">
+          <CommonButton variant="outline" onClick={() => setIsOpen("")}>
             {t("cancel")}
           </CommonButton>
           <CommonButton
