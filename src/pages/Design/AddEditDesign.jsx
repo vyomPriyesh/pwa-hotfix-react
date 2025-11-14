@@ -23,7 +23,7 @@ import AddEditCategory from "../Category/AddEditCategory";
 import AddEditParty from "../Party/AddEditParty";
 import designService from "../../service/design.service";
 
-const AddEditDesign = ({ isOpen, setIsOpen }) => {
+const AddEditDesign = ({ selectedData, isOpen, setIsOpen }) => {
   const { t } = useTranslation("common");
   const [createName, setcreateName] = useState(false);
   const [imageDialog, setImageDialog] = useState(false);
@@ -31,6 +31,9 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const IMG_URL = config.baseImage;
   const { data } = useSelector(state => state?.dropdown)
+  console.log("selectedData", selectedData);
+
+  const isEdit = !!selectedData
 
   const handleImageUpload = async (e) => {
 
@@ -70,17 +73,17 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
   };
 
   const initialValues = {
-    category: "",
-    party: "",
-    design_no: "",
-    notes: "",
-    images: [],
-    labour: [{ name: "", price: "" }],
-    material: [{ item: "", qty: "", price: "" }],
-    advance: false,
-    paper_details: [{ design_no: "", paper_role: "", size: "", dia_patti: "", saree_patti: "", net_paper: "", images: null }],
-    stone_detail: [{ type: "", size: "", color: "", price: "" }],
-    // date: "",
+    category: selectedData?.category?._id || "",
+    party: selectedData?.party?._id || "",
+    design_no: selectedData?.design_no || "",
+    notes: selectedData?.notes || "",
+    images: selectedData?.images || [],
+    labour: selectedData?.labour?.length ? selectedData?.labour?.map(l => ({ _id: l?._id, name: l?.name || "", price: l?.price || "" })) : [{ name: "", price: "" }],
+    material: selectedData?.material?.length ? selectedData?.material?.map(m => ({ _id: m?._id, item: m?.item || "", qty: m?.qty || "", price: m?.price || "" })) : [{ item: "", qty: "", price: "" }],
+    advance: selectedData?.advance || false,
+    paper_details: selectedData?.paper_details ? selectedData?.paper_details?.map(p => ({ _id: p?._id, design_no: p?.design_no || "", paper_role: p?.paper_role || "", size: p?.size || "", dia_patti: p?.dia_patti || "", saree_patti: p?.saree_patti || "", net_paper: p?.net_paper || "", images: p?.images || null })) : [{ design_no: "", paper_role: "", size: "", dia_patti: "", saree_patti: "", net_paper: "", images: null }],
+    stone_detail: selectedData?.stone_detail ? selectedData?.stone_detail?.map(s => ({ _id: s?._id, type: s?.type || "", size: s?.size || "", color: s?.color || "", price: s?.price || "" })) : [{ type: "", size: "", color: "", price: "" }],
+    date: selectedData?.createdAt || "",
   }
 
   const validationSchema = Yup.object({
@@ -144,19 +147,28 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
     validationSchema,
     enableReinitialize: true,
     onSubmit: async (values) => {
-      
+
       const payload = {
         ...values,
         material: values.advance ? [] : values.material,
         paper_details: values.advance ? values.paper_details : [],
         stone_detail: values.advance ? values.stone_detail : [],
       }
-      console.log("values:", { payload });
+
       try {
-        const response = await designService.addDesign(payload);
+        let response;
+        if (isEdit) {
+          response = await designService.updateDesign(selectedData?._id, payload)
+        }
+        else {
+          response = await designService.addDesign(payload)
+        }
         if (response?.data?.success) {
-          setIsOpen("");
           alert(response?.data?.message);
+          if (!isEdit) {
+            formik.resetForm()
+          }
+          setIsOpen("");
         }
       } catch (error) {
         console.log("error", error);
@@ -171,7 +183,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
         isOpen={isOpen}
         onClose={() => setIsOpen("")}
         size="lg"
-        title={t("design.addDesign")}
+        title={isEdit ? "Edit Design" : t("design.addDesign")}
         footer={
           <div className="flex gap-2">
             <CommonButton
@@ -372,7 +384,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           type="text"
                           placeholder={t("design.quantity")}
                           name={`material[${i}].qty`}
-                          value={mat.quantity}
+                          value={mat.qty}
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                         />
@@ -485,7 +497,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                         const imageUrl = IMG_URL + response.data.data[0];
 
                         const updated = [...formik.values.paper_details];
-                        updated[idx] = { ...updated[idx], image: imageUrl };
+                        updated[idx] = { ...updated[idx], images: imageUrl };
                         formik.setFieldValue("paper_details", updated);
                         formik.setFieldTouched(`paper_details[${idx}].images`, true, false);
                       };
@@ -493,7 +505,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
 
                     const handleRemovePaperImage = (idx) => {
                       const updated = [...formik.values.paper_details];
-                      updated[idx] = { ...updated[idx], image: null };
+                      updated[idx] = { ...updated[idx], images: null };
                       formik.setFieldValue("paper_details", updated);
                       formik.setFieldTouched(`paper_details[${idx}].images`, true, false);
                     };
