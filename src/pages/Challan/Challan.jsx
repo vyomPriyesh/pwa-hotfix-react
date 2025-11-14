@@ -1,43 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
 import { CommonTextField } from "../../components/widgets/common_textField";
 import { CircleFadingPlus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import Delete from "../../components/common/Delete";
 import AddChallan from "./AddChallan";
 import InOutDialog from "./InOutDialog";
-
-const designListData = [
-  {
-    _id: "1",
-    img: "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
-    challan: "161",
-    name: "Vyom Infotech",
-    designNo: "D001",
-    category: "D.No.218",
-    rate: "15800",
-    date: "15/08/2025",
-    job: "845",
-    piece: "108",
-    cPerson: "Priyank Mangukiya",
-    mobile: "9876543210",
-  },
-  {
-    _id: "1",
-    img: "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=",
-    challan: "161",
-    name: "Vyom Infotech",
-    designNo: "D001",
-    category: "D.No.218",
-    rate: "15800",
-    date: "15/08/2025",
-    job: "845",
-    piece: "108",
-    cPerson: "Priyank Mangukiya",
-    mobile: "9876543210",
-  },
-];
+import challanservice from "../../service/challan.service";
+import dateformate from "../../components/widgets/dateformate";
 
 const imagePlaceholder =
   "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=";
@@ -45,19 +15,25 @@ const imagePlaceholder =
 const Challan = () => {
 
   const { t } = useTranslation("common");
+
+  const [allData, setAllData] = useState([])
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
-
-  const [inOut, setInOut] = useState(false)
+  const [page, setPage] = useState(1)
+  const [size, setSize] = useState(10)
   const [addEdit, setAddEdit] = useState(false)
   const [type, setType] = useState(null)
 
-  // const handleCloseINout = () => {
-  //   setIsOpen(false)
-  //   if (type) {
-  //     setAddEdit(true)
-  //   }
-  // }
+  const fetchAllINChallan = async () => {
+    const response = await challanservice.getAllChallan(page, size, search)
+    if (response) {
+      setAllData(response.data.data.data)
+    }
+  }
+
+  useEffect(() => {
+    fetchAllINChallan()
+  }, [])
 
   const handleCloseINout = (type) => {
     setType(type)
@@ -94,15 +70,15 @@ const Challan = () => {
 
         {/* User Data */}
         <div className="grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-2 md:gap-4">
-          {designListData.length > 0 ? (
-            designListData.map((item, index) => (
+          {allData.length > 0 ? (
+            allData.map((item, index) => (
               <Card
-                key={item._id || index}
+                key={index}
                 className="shadow-user_card relative overflow-hidden"
               >
                 <div className="h-24 lg:h-32 overflow-hidden w-full">
                   <img
-                    src={item?.img || imagePlaceholder}
+                    src={(item?.in_id ? item?.in_id?.challan_image : item?.challan_image) || imagePlaceholder}
                     alt="User"
                     className="h-full w-full object-cover"
                   />
@@ -110,35 +86,35 @@ const Challan = () => {
                 <div className="grid gap-1 p-2 md:p-3.5">
                   <div className="flex items-center gap-1">
                     <h4 className="p-medium max-sm:text-xs line-clamp-1">{t("challan.challanNo")}: </h4>
-                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.challan}</h4>
+                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.in_id ? item?.in_id?.challan_no : item?.challan_no}</h4>
                   </div>
                   <div className="flex items-center gap-1">
                     <h4 className="p-medium max-sm:text-xs line-clamp-1">{t("design.category")}: </h4>
-                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.category}</h4>
+                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.in_id ? item?.in_id?.category?.name : item?.category?.name}</h4>
                   </div>
                   <div className="flex items-center gap-1">
                     <h4 className="p-medium max-sm:text-xs line-clamp-1">{t("design.date")}: </h4>
-                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.date}</h4>
+                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{dateformate(item?.createdAt)}</h4>
                   </div>
                   <div className="flex items-center gap-1">
                     <h4 className="p-medium max-sm:text-xs line-clamp-1">{t("sidebar.party")}: </h4>
-                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.name}</h4>
+                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.in_id ? item?.in_id?.party?.name : item?.party?.name}</h4>
                   </div>
                   <div className="flex items-center gap-1">
                     <h4 className="p-medium max-sm:text-xs line-clamp-1">{t("challan.jobNo")}: </h4>
-                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.job}</h4>
+                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.job_number}</h4>
                   </div>
                   <div className="flex items-center gap-1">
                     <h4 className="p-medium max-sm:text-xs line-clamp-1">{t("challan.piece")}: </h4>
-                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.piece}</h4>
+                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.in_id ? item?.in_id?.mall_type : item?.mall_type}</h4>
                   </div>
                   <div className="flex items-center gap-1">
                     <h4 className="p-medium max-sm:text-xs line-clamp-1">{t("challan.cPerson")}: </h4>
-                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.cPerson}</h4>
+                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.in_id ? item?.in_id?.carrier_person?.name : item?.carrier_person?.name}</h4>
                   </div>
                   <div className="flex items-center gap-1">
                     <h4 className="p-medium max-sm:text-xs line-clamp-1">{t("users.mobile")}: </h4>
-                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.mobile}</h4>
+                    <h4 className="p-regular max-sm:text-xs line-clamp-1">{item?.in_id ? item?.in_id?.carrier_person?.mobile : item?.carrier_person?.mobile}</h4>
                   </div>
                 </div>
 

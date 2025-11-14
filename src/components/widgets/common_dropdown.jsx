@@ -9,7 +9,7 @@ import {
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
 
-const CommonDropdown = ({ value, placeholder, options, onSelect, error }) => {
+const CommonDropdown = ({ value, placeholder, options, onSelect, error ,disabled}) => {
 
     const [open, setOpen] = useState(false)
 
@@ -25,6 +25,7 @@ const CommonDropdown = ({ value, placeholder, options, onSelect, error }) => {
                     <Button
                         variant="outline"
                         role="combobox"
+                        disabled={disabled}
                         aria-expanded={open}
                         className="justify-between w-full"
                     >
