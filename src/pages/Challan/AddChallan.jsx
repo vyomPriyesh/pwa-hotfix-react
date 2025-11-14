@@ -5,14 +5,17 @@ import CommonButton from "../../components/widgets/common_button";
 import CommonDialog from "../../components/widgets/common_dialog";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
-import { ImageUp, Trash2, X } from "lucide-react";
+import { CircleFadingPlus, ImageUp, Trash2, X } from "lucide-react";
 import { CommonTextField } from "../../components/widgets/common_textField";
 import DatePiker from "../../components/common/DatePiker";
 import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
+import CommonBox from "../../components/common/common_box";
+import { Textarea } from "../../components/ui/textarea";
 
-const AddChallan = ({ user, isOpen, setIsOpen }) => {
+const AddChallan = ({ inOut, isOpen, setIsOpen, setInOut }) => {
   const { t } = useTranslation("common");
   const [imageDialog, setImageDialog] = useState(false);
+  
 
   // 🔹 Handle cancel
   const handleCancel = () => {
@@ -59,7 +62,7 @@ const AddChallan = ({ user, isOpen, setIsOpen }) => {
         isOpen={isOpen}
         onClose={handleCancel}
         size="lg"
-        title={t("challan.in")}
+        title={inOut == true ? <>{t("challan.in")}</>:<>{t("challan.out")}</>}
         footer={
           <div className="flex gap-2">
             <CommonButton
@@ -75,18 +78,24 @@ const AddChallan = ({ user, isOpen, setIsOpen }) => {
           </div>
         }
       >
-        <ScrollArea className="h-[calc(100dvh-250px)] -mr-2 pr-2">
+        <ScrollArea className="h-[calc(100dvh-245px)] -mr-2 pr-2">
           <div className="flex flex-col gap-4">
             <Label htmlFor="designImage">
               <div className="w-fit mx-auto">
                 <div className="flex items-center justify-center relative gap-2">
-                  {/* Image Open Dialog onClick -  onClick={() => setImageDialog(true)} */}
-                  <div className="h-36 w-32 p-2 shadow-inners rounded-md flex items-center justify-center cursor-pointer">
-                    <ImageUp className="md:size-[36px] opacity-50" />
+                  <div className="w-fit grid gap-2">
+                    <h3 className="text-center">{t("challan.mallImage")}</h3>
+                    {/* Image Open Dialog onClick -  onClick={() => setImageDialog(true)} */}
+                    <div className="h-36 w-32 p-2 shadow-inners rounded-md flex items-center justify-center cursor-pointer">
+                      <ImageUp className="md:size-[36px] opacity-50" />
+                    </div>
                   </div>
-                  {/* Image Open Dialog onClick -  onClick={() => setImageDialog(true)} */}
-                  <div className="h-36 w-32 p-2 shadow-inners rounded-md flex items-center justify-center cursor-pointer">
-                    <ImageUp className="md:size-[36px] opacity-50" />
+                  <div className="w-fit grid gap-2">
+                    <h3 className="text-center">{t("challan.challanImage")}</h3>
+                    {/* Image Open Dialog onClick -  onClick={() => setImageDialog(true)} */}
+                    <div className="h-36 w-32 p-2 shadow-inners rounded-md flex items-center justify-center cursor-pointer">
+                      <ImageUp className="md:size-[36px] opacity-50" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -112,7 +121,10 @@ const AddChallan = ({ user, isOpen, setIsOpen }) => {
               </div>
               <div className="grid gap-2">
                 <Label>{t("challan.mall")}</Label>
-                <RadioGroup defaultValue="comfortable" className="border border-border rounded-md h-10 grid grid-cols-2 gap-3 px-3">
+                <RadioGroup
+                  defaultValue="comfortable"
+                  className="border border-border rounded-md h-10 grid grid-cols-2 gap-3 px-3"
+                >
                   <div className="flex items-center gap-3">
                     <RadioGroupItem value="default" id="r1" />
                     <Label htmlFor="r1">{t("challan.regular")}</Label>
@@ -132,7 +144,10 @@ const AddChallan = ({ user, isOpen, setIsOpen }) => {
               </div>
               <div className="grid gap-2">
                 <Label>{t("challan.totalMall")}</Label>
-                <RadioGroup defaultValue="comfortable" className="border border-border rounded-md h-10 grid grid-cols-2 gap-3 px-3">
+                <RadioGroup
+                  defaultValue="comfortable"
+                  className="border border-border rounded-md h-10 grid grid-cols-2 gap-3 px-3"
+                >
                   <div className="flex items-center gap-3">
                     <RadioGroupItem value="default" id="m1" />
                     <Label htmlFor="m1">{t("challan.piece")}</Label>
@@ -144,11 +159,53 @@ const AddChallan = ({ user, isOpen, setIsOpen }) => {
                 </RadioGroup>
               </div>
               <div className="grid gap-2">
-                <Label className="text-transparent">{t("challan.challanNo")}</Label>
+                <Label className="text-transparent">
+                  {t("challan.challanNo")}
+                </Label>
                 <CommonTextField
                   type="number"
                   placeholder={t("challan.totalMall")}
                 />
+              </div>
+              <div className="grid gap-2 col-span-2">
+                <Label>{t("selectCompanyPlaceholder")}</Label>
+                <div className="grid grid-cols-[auto,40px] gap-2">
+                  <CommonBox placeholders={t("selectCompanyPlaceholder")} />
+                  <CommonButton
+                    type="button"
+                    className="flex items-center justify-center p-0 w-10 h-10"
+                  >
+                    <CircleFadingPlus className="size-5" />
+                  </CommonButton>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label>{t("selectIteamPlaceholder")}</Label>
+                <div className="grid grid-cols-[auto,40px] gap-2">
+                  <CommonBox placeholders={t("selectIteamPlaceholder")} />
+                  <CommonButton
+                    type="button"
+                    className="flex items-center justify-center p-0 w-10 h-10"
+                  >
+                    <CircleFadingPlus className="size-5" />
+                  </CommonButton>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label>{t("challan.carrierPerson")}</Label>
+                <div className="grid grid-cols-[auto,40px] gap-2">
+                  <CommonBox placeholders={t("selectCarrierPlaceholder")} />
+                  <CommonButton
+                    type="button"
+                    className="flex items-center justify-center p-0 w-10 h-10"
+                  >
+                    <CircleFadingPlus className="size-5" />
+                  </CommonButton>
+                </div>
+              </div>
+              <div className="grid gap-2 col-span-2">
+                <Label>{t("design.notes")}</Label>
+                <Textarea type="text" placeholder={t("design.notes")} />
               </div>
             </div>
           </div>

@@ -6,6 +6,7 @@ import { CircleFadingPlus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Delete from "../../components/common/Delete";
 import AddChallan from "./AddChallan";
+import InOutDialog from "./InOutDialog";
 
 const designListData = [
   {
@@ -145,11 +146,9 @@ const Challan = () => {
         </div>
       </Card>
 
-      <AddChallan
-        isOpen={isOpen === "edit"}
+      <InOutDialog isOpen={isOpen === "edit"}
         setIsOpen={setIsOpen}
-        isEdit={isOpen}
-      />
+        isEdit={isOpen} />
     </div>
   );
 };
