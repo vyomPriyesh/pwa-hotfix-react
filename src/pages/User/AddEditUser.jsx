@@ -148,7 +148,7 @@ const AddEditUser = ({ user, isOpen, setIsOpen }) => {
         isOpen={isOpen}
         onClose={handleCancel}
         size="lg"
-        title={t("users.editBadge")}
+        title={formData?._id ? t("users.editBadge") : "Add User"}
         footer={
           <div className="flex gap-2">
             <CommonButton variant="outline" onClick={handleCancel}>

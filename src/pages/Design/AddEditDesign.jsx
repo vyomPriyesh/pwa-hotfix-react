@@ -14,117 +14,244 @@ import CommonAdd from "../../components/common/common_add";
 import { Checkbox } from "../../components/ui/checkbox";
 import { Separator } from "../../components/ui/separator";
 import { Textarea } from "../../components/ui/textarea";
+import { getIn, useFormik } from "formik";
+import * as Yup from "yup";
+import AuthService from "../../service/auth.service";
+import config from "../../config";
+import { useSelector } from "react-redux";
+import AddEditCategory from "../Category/AddEditCategory";
+import AddEditParty from "../Party/AddEditParty";
+import designService from "../../service/design.service";
 
-const frameworks = [
-  {
-    value: "admin",
-    label: "Admin",
-  },
-  {
-    value: "work",
-    label: "Job Work",
-  },
-  {
-    value: "tempo",
-    label: "Tempo Driver",
-  },
-];
-
-const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
+const AddEditDesign = ({ selectedData, isOpen, setIsOpen }) => {
   const { t } = useTranslation("common");
   const [createName, setcreateName] = useState(false);
-  const [advance, setAdvance] = useState(false);
   const [imageDialog, setImageDialog] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const IMG_URL = config.baseImage;
+  const { data } = useSelector(state => state?.dropdown)
 
-  // Image Upload Functionality
-  const [image, setImage] = useState(null); // only one image
+  const isEdit = !!selectedData
 
-  // 🔹 Handle image upload
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage({
-        id: imageUrl,
-        file,
-      });
+  const handleImageUpload = async (e) => {
+
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    setIsUploading(true);
+    try {
+      const uploadedUrls = [];
+
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append("images", file);
+
+        const response = await AuthService.imageUpload(formData);
+
+        if (response.data.success) {
+          const uploadedUrl = IMG_URL + response.data.data[0];
+          uploadedUrls.push(uploadedUrl);
+        }
+      }
+
+      const updatedImages = [...formik.values.images, ...uploadedUrls];
+      formik.setFieldValue("images", updatedImages);
+
+    } catch (error) {
+      console.error("Image upload failed:", error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
-  // 🔹 Remove image
-  const handleRemoveImage = () => {
-    setImage(null);
+  const handleRemoveImage = (urlToRemove) => {
+    const updatedImages = formik.values.images.filter((url) => url !== urlToRemove);
+
+    formik.setFieldValue("images", updatedImages);
   };
 
-  // 🔹 Handle cancel
-  const handleCancel = () => {
-    setIsOpen("");
-  };
+  const initialValues = {
+    category: selectedData?.category?._id || "",
+    party: selectedData?.party?._id || "",
+    design_no: selectedData?.design_no || "",
+    notes: selectedData?.notes || "",
+    images: selectedData?.images || [],
+    labour: selectedData?.labour?.length ? selectedData?.labour?.map(l => ({ _id: l?._id, name: l?.name || "", price: l?.price || "" })) : [{ name: "", price: "" }],
+    material: selectedData?.material?.length ? selectedData?.material?.map(m => ({ _id: m?._id, item: m?.item || "", qty: m?.qty || "", price: m?.price || "" })) : [{ item: "", qty: "", price: "" }],
+    advance: selectedData?.advance || false,
+    paper_details: selectedData?.paper_details ? selectedData?.paper_details?.map(p => ({ _id: p?._id, design_no: p?.design_no || "", paper_role: p?.paper_role || "", size: p?.size || "", dia_patti: p?.dia_patti || "", saree_patti: p?.saree_patti || "", net_paper: p?.net_paper || "", images: p?.images || null })) : [{ design_no: "", paper_role: "", size: "", dia_patti: "", saree_patti: "", net_paper: "", images: null }],
+    stone_detail: selectedData?.stone_detail ? selectedData?.stone_detail?.map(s => ({ _id: s?._id, type: s?.type || "", size: s?.size || "", color: s?.color || "", price: s?.price || "" })) : [{ type: "", size: "", color: "", price: "" }],
+    date: selectedData?.createdAt || "",
+  }
 
-  // 🔹 Handle submit
-  const handleSubmit = () => {
-    setIsOpen("");
-  };
+  const validationSchema = Yup.object({
+    images: Yup.array()
+      .min(1, "Please upload at least one image.")
+      .required("Please upload at least one image."),
+    design_no: Yup.string().required("Design No is required"),
+    category: Yup.string().required("Category is required"),
+    party: Yup.string().required("Party Name is required"),
+    notes: Yup.string().required("notes is required"),
+    labour: Yup.array()
+      .of(
+        Yup.object({
+          name: Yup.string().required("Name is required"),
+          price: Yup.number().typeError("Must be number").required("Price required"),
+        })
+      )
+      .min(1, "At least one labour required"),
+    material: Yup.array().when("advance", {
+      is: false,
+      then: (schema) =>
+        schema.of(
+          Yup.object({
+            item: Yup.string().required("Item required"),
+            qty: Yup.number().typeError("Must be number").required("Quantity required"),
+            price: Yup.number().typeError("Must be number").required("Price required"),
+          })
+        ),
+    }),
+    paper_details: Yup.array().when("advance", {
+      is: true,
+      then: (schema) =>
+        schema.of(
+          Yup.object({
+            design_no: Yup.string().required("Design No required"),
+            paper_role: Yup.string().required("Paper Role required"),
+            size: Yup.string().required("Size required"),
+            dia_patti: Yup.string().required("diaPatti required"),
+            saree_patti: Yup.string().required("sareePatti required"),
+            net_paper: Yup.string().required("netPaper required"),
+            images: Yup.mixed().nullable().required("Please upload image."),
+          })
+        ),
+    }),
+    stone_detail: Yup.array().when("advance", {
+      is: true,
+      then: (schema) =>
+        schema.of(
+          Yup.object({
+            type: Yup.string().required("type required"),
+            size: Yup.string().required("size required"),
+            color: Yup.string().required("color required"),
+            price: Yup.string().required("price required")
+          })
+        ),
+    }),
+  })
 
-  // Image Dialog
-  const ImageDialogs = () => {
-    return (
-      <>
-        <CommonDialog
-          isOpen={imageDialog}
-          onOpenChange={setImageDialog}
-          size="lg"
-          title={t("")}
-          className="relative"
-        >
-          <span  onClick={() => setImageDialog(false)} className="absolute top-3 right-3 h-10 w-10 flex items-center justify-center cursor-pointer">
-            <X className="size-6" />
-          </span>
-          <div className="max-h-[calc(100dvh-200px)]">
-          <img
-            src="https://img.freepik.com/free-photo/closeup-scarlet-macaw-from-side-view-scarlet-macaw-closeup-head_488145-3540.jpg?semt=ais_hybrid&w=740&q=80"
-            alt="Preview"
-            className="object-contain bg-contain max-h-[calc(100dvh-200px)] h-full w-full"
-          />
-          </div>
-        </CommonDialog>
-      </>
-    );
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+
+      const payload = {
+        ...values,
+        material: values.advance ? [] : values.material,
+        paper_details: values.advance ? values.paper_details : [],
+        stone_detail: values.advance ? values.stone_detail : [],
+      }
+
+      try {
+        let response;
+        if (isEdit) {
+          response = await designService.updateDesign(selectedData?._id, payload)
+        }
+        else {
+          response = await designService.addDesign(payload)
+        }
+        if (response?.data?.success) {
+          alert(response?.data?.message);
+          if (!isEdit) {
+            formik.resetForm()
+          }
+          setIsOpen("");
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+    },
+  })
+
+  const totalPrice = formik.values.material.reduce((acc, mat) => {
+    const price = parseFloat(mat.price) || 0;
+    return acc + price;
+  }, 0);
+
+  const totalStonePrice = formik.values.stone_detail.reduce((acc, mat) => {
+    const price = parseFloat(mat.price) || 0;
+    return acc + price;
+  }, 0);
+
+  const totalLabourPrice = formik.values.labour.reduce((acc, mat) => {
+    const price = parseFloat(mat.price) || 0;
+    return acc + price;
+  }, 0);
+
+  const handlePaperChange = (e, idx, field) => {
+    const value = e.target.value;
+    const updated = [...formik.values.paper_details];
+
+    updated[idx] = { ...updated[idx], [field]: value };
+
+    const sareePatti = parseFloat(updated[idx].saree_patti) || 0;
+    const diaPatti = parseFloat(updated[idx].dia_patti) || 0;
+    updated[idx].net_paper = diaPatti ? (sareePatti / diaPatti).toFixed(2) : "0";
+
+    formik.setFieldValue("paper_details", updated);
   };
 
   return (
     <>
-      {/* 🔹 Main Add/Edit User Dialog */}
+
       <CommonDialog
         isOpen={isOpen}
-        onClose={handleCancel}
+        onClose={() => setIsOpen("")}
         size="lg"
-        title={t("design.addDesign")}
+        title={isEdit ? "Edit Design" : t("design.addDesign")}
         footer={
           <div className="flex gap-2">
             <CommonButton
               variant="outline"
               className="lg:w-40"
-              onClick={handleCancel}
+              onClose={() => setIsOpen("")}
             >
               {t("cancel")}
             </CommonButton>
-            <CommonButton className="lg:w-40" onClick={handleSubmit}>
+            <CommonButton className="lg:w-40" onClick={formik.handleSubmit} >
               {t("add")}
             </CommonButton>
           </div>
         }
       >
         <ScrollArea className="h-[calc(100dvh-250px)] -mr-2 pr-2">
-          <div className="flex flex-col gap-4">
+          <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
             <Label htmlFor="designImage">
-              <div className="h-36 cursor-pointer border-dashed border rounded-2xl border-primary/40 flex flex-col items-center justify-center gap-3 text-center">
-                <ImageUp className="md:size-[36px] opacity-50" />
-                <p>{t("design.uploadImage")}</p>
-              </div>
+              {formik.values.images.length === 0 && (
+                <div className="h-36 cursor-pointer border-dashed border rounded-2xl border-primary/40 flex flex-col items-center justify-center gap-3 text-center">
+                  <ImageUp className="md:size-[36px] opacity-50" />
+                  <p>{t("design.uploadImage")}</p>
+                </div>
+              )}
+            </Label>
+            {formik.touched.images && formik.errors.images && (
+              <p className="text-red-500 text-sm mt-1">{formik.errors.images}</p>
+            )}
+            <Input
+              id="designImage"
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handleImageUpload}
+            />
+
+            {formik.values.images.length > 0 && (
               <ScrollArea className="h-36 w-[calc(100vw-48px)] lg:w-[750px] p-2 shadow-inners rounded-md">
                 <div className="flex w-max gap-3">
-                  {[1, 2, 3, 4, 5].map((_, index) => (
+                  {formik.values.images?.map((item, index) => (
                     <div
                       className="relative z-10 overflow-hidden rounded-lg"
                       key={index}
@@ -134,12 +261,12 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
                         className="w-36 h-32"
                       >
                         <img
-                          src="https://img.freepik.com/free-photo/closeup-scarlet-macaw-from-side-view-scarlet-macaw-closeup-head_488145-3540.jpg?semt=ais_hybrid&w=740&q=80"
+                          src={item}
                           alt="Images"
                           className="h-full w-full object-cover bg-cover"
                         />
                       </div>
-                      <div className="absolute top-0 right-0 h-10 w-10 rounded-bl-full bg-destructive flex items-start justify-end p-1.5 cursor-pointer">
+                      <div onClick={() => handleRemoveImage(item)} className="absolute top-0 right-0 h-10 w-10 rounded-bl-full bg-destructive flex items-start justify-end p-1.5 cursor-pointer">
                         <Trash2 className="text-white size-5" />
                       </div>
                     </div>
@@ -147,48 +274,68 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
                 </div>
                 <ScrollBar orientation="horizontal" />
               </ScrollArea>
-            </Label>
-            <Input
-              id="uploadImages"
-              type="file"
-              accept="image/*"
-              className="hidden"
-            />
-            <div className="flex items-center justify-end">
-              <CommonButton
-                as="span"
-                className="sm:w-fit cursor-pointer"
-                type="button"
-              >
-                <span className="flex items-center justify-center gap-2">
-                  <CircleFadingPlus className="size-5" />
-                  {t("addImage")}
-                </span>
-              </CommonButton>
-            </div>
+            )}
+            {formik.values.images.length > 0 && (
+              <div className="flex items-center justify-end">
+                <CommonButton
+                  as="span"
+                  className="sm:w-fit cursor-pointer"
+                  type="button"
+                >
+                  <Label className="flex items-center justify-center gap-2" htmlFor="designImage">
+                    <CircleFadingPlus className="size-5" />
+                    {t("addImage")}
+                  </Label>
+                </CommonButton>
+              </div>
+            )}
             <Separator />
             <div className="grid lg:!grid-cols-[1fr,1fr] gap-4">
               <div className="grid gap-2">
                 <Label>{t("design.date")}</Label>
-                <DatePiker />
+                <DatePiker
+                  name="date"
+                  value={formik.values.date}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+                {formik.touched.date && formik.errors.date && (
+                  <p className="text-red-500 text-sm mt-1">{formik.errors.date}</p>
+                )}
               </div>
               <div className="grid gap-2">
                 <Label>{t("design.designNo")}</Label>
                 <CommonTextField
                   type="text"
                   placeholder={t("designNoPlaceholder")}
+                  name="design_no"
+                  value={formik.values.design_no}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                {formik.touched.design_no && formik.errors.design_no && (
+                  <p className="text-red-500 text-sm mt-1">{formik.errors.design_no}</p>
+                )}
               </div>
               <div className="grid gap-2">
                 <Label>{t("design.selectCategory")}</Label>
                 <div className="grid grid-cols-[auto,40px] gap-2">
-                  <CommonBox
-                    placeholders={t("design.selectCategory")}
-                    frameworks={frameworks}
-                  />
+                  <div>
+                    <CommonBox
+                      placeholders={t("design.selectCategory")}
+                      frameworks={data?.data?.categories}
+                      name="category"
+                      value={formik.values.category}
+                      onChange={(val) => formik.setFieldValue("category", val)}
+                      onBlur={() => formik.setFieldTouched("category", true)}
+                    />
+                    {formik.touched.category && formik.errors.category && (
+                      <p className="text-red-500 text-sm mt-1">{formik.errors.category}</p>
+                    )}
+                  </div>
                   <CommonButton
                     type="button"
-                    onClick={() => setcreateName(true)}
+                    onClick={() => setIsOpenDialog("category")}
                     className="flex items-center justify-center p-0 w-10 h-10"
                   >
                     <CircleFadingPlus className="size-5" />
@@ -198,13 +345,22 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
               <div className="grid gap-2">
                 <Label>{t("design.selectPartyName")}</Label>
                 <div className="grid grid-cols-[auto,40px] gap-2">
-                  <CommonBox
-                    placeholders={t("design.selectPartyName")}
-                    frameworks={frameworks}
-                  />
+                  <div>
+                    <CommonBox
+                      placeholders={t("design.selectPartyName")}
+                      frameworks={data?.data?.parties}
+                      name="party"
+                      value={formik.values.party}
+                      onChange={(val) => formik.setFieldValue("party", val)}
+                      onBlur={() => formik.setFieldTouched("party", true)}
+                    />
+                    {formik.touched.party && formik.errors.party && (
+                      <p className="text-red-500 text-sm mt-1">{formik.errors.party}</p>
+                    )}
+                  </div>
                   <CommonButton
                     type="button"
-                    onClick={() => setcreateName(true)}
+                    onClick={() => setIsOpenDialog("party")}
                     className="flex items-center justify-center p-0 w-10 h-10"
                   >
                     <CircleFadingPlus className="size-5" />
@@ -216,52 +372,114 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
             <div className="flex items-center col-span-2 gap-2">
               <Checkbox
                 id="terms"
-                checked={advance}
-                onCheckedChange={(checked) => setAdvance(checked)}
+                checked={formik.values.advance}
+                onCheckedChange={(checked) => formik.setFieldValue("advance", checked)}
               />
               <Label htmlFor="terms">{t("design.advance")}</Label>
             </div>
-            {!advance ? (
+            {!formik.values.advance ? (
               <>
                 {/* Material */}
                 <h5 className="h5-bold lg:text-lg">{t("design.material")}</h5>
-                <div className="grid grid-cols-[auto,80px,120px,40px] items-end gap-3">
-                  <div className="grid gap-2">
-                    <Label>{t("design.item")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.item")}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.quantity")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.quantity")}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.price")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.price")}
-                    />
-                  </div>
+                {formik.values.material.map((mat, i) => {
+                  const itemTouched = getIn(formik.touched, `material[${i}].item`);
+                  const itemError = getIn(formik.errors, `material[${i}].item`);
+                  const qtyTouched = getIn(formik.touched, `material[${i}].qty`);
+                  const qtyError = getIn(formik.errors, `material[${i}].qty`);
+                  const priceTouched = getIn(formik.touched, `material[${i}].price`);
+                  const priceError = getIn(formik.errors, `material[${i}].price`);
+
+                  return (
+                    <div className="grid grid-cols-[auto,80px,120px,40px] items-end gap-3">
+                      <div className="grid gap-2">
+                        <Label>{t("design.item")}</Label>
+                        <CommonTextField
+                          type="text"
+                          placeholder={t("design.item")}
+                          name={`material[${i}].item`}
+                          value={mat.item}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                        />
+                        {itemTouched && itemError && (
+                          <p className="text-red-500 text-sm mt-1">{itemError}</p>
+                        )}
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>{t("design.quantity")}</Label>
+                        <CommonTextField
+                          type="text"
+                          placeholder={t("design.quantity")}
+                          name={`material[${i}].qty`}
+                          value={mat.qty}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                        />
+                        {qtyTouched && qtyError && (
+                          <p className="text-red-500 text-sm mt-1">{qtyError}</p>
+                        )}
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>{t("design.price")}</Label>
+                        <CommonTextField
+                          type="text"
+                          placeholder={t("design.price")}
+                          name={`material[${i}].price`}
+                          value={mat.price}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                        />
+                        {priceTouched && priceError && (
+                          <p className="text-red-500 text-sm mt-1">{priceError}</p>
+                        )}
+                      </div>
+                      {formik.values.material.length > 1 ? (
+                        <div className="flex items-center justify-center h-10 w-10 p-0 rounded-lg bg-destructive cursor-pointer"
+                          onClick={() => {
+                            const updated = formik.values.material.filter((_, idx) => idx !== i);
+                            formik.setFieldValue("material", updated);
+                          }}
+                        >
+                          <Trash2 className="text-white size-5" />
+                        </div>
+                      ) : (
+                        <CommonButton
+                          type="button"
+                          className="flex items-center justify-center p-0 w-10 h-10"
+                          onClick={() =>
+                            formik.setFieldValue("material", [
+                              ...formik.values.material,
+                              { item: "", qty: "", price: "" },
+                            ])
+                          }
+                        >
+                          <CircleFadingPlus className="size-5" />
+                        </CommonButton>
+                      )}
+                    </div>
+                  )
+                })}
+                {formik.values.material.length > 1 && (
                   <CommonButton
                     type="button"
                     className="flex items-center justify-center p-0 w-10 h-10"
+                    onClick={() =>
+                      formik.setFieldValue("material", [
+                        ...formik.values.material,
+                        { item: "", qty: "", price: "" },
+                      ])
+                    }
                   >
                     <CircleFadingPlus className="size-5" />
                   </CommonButton>
-                </div>
+                )}
                 <div className="flex items-center gap-3 justify-end">
                   <h6 className="h6-bold">{t("design.totalPrice")} :</h6>
-                  <h6 className="h6-regular">₹00.00</h6>
+                  <h6 className="h6-regular">₹{totalPrice.toFixed(2)}</h6>
                 </div>
               </>
             ) : (
               <>
-                {/* Advance Details */}
                 {/* Paper */}
                 <div className="grid grid-cols-3 gap-3">
                   <div className="flex items-center justify-between gap-3 col-span-3">
@@ -271,101 +489,200 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
                     <CommonButton
                       type="button"
                       className="flex items-center justify-center p-0 w-10 h-10"
+                      onClick={() =>
+                        formik.setFieldValue("paper_details", [
+                          ...formik.values.paper_details,
+                          { design_no: "", paper_role: "", size: "", dia_patti: "", saree_patti: "", net_paper: "", images: null },
+                        ])
+                      }
                     >
                       <CircleFadingPlus className="size-5" />
                     </CommonButton>
                   </div>
+                  {formik.values.paper_details.map((pap, i) => {
+                    const designTouched = getIn(formik.touched, `paper_details[${i}].design_no`);
+                    const designError = getIn(formik.errors, `paper_details[${i}].design_no`);
+                    const roleTouched = getIn(formik.touched, `paper_details[${i}].paper_role`);
+                    const roleError = getIn(formik.errors, `paper_details[${i}].paper_role`);
+                    const sizeTouched = getIn(formik.touched, `paper_details[${i}].size`);
+                    const sizeError = getIn(formik.errors, `paper_details[${i}].size`);
+                    const diaPattiTouched = getIn(formik.touched, `paper_details[${i}].dia_patti`);
+                    const diaPattiError = getIn(formik.errors, `paper_details[${i}].dia_patti`);
+                    const sareePattiTouched = getIn(formik.touched, `paper_details[${i}].saree_patti`);
+                    const sareePattiError = getIn(formik.errors, `paper_details[${i}].saree_patti`);
+                    const netPaperTouched = getIn(formik.touched, `paper_details[${i}].net_paper`);
+                    const netPaperError = getIn(formik.errors, `paper_details[${i}].net_paper`);
 
-                  <div className="grid gap-2">
-                    <Label>{t("design.designNo")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.designNo")}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.paperRole")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.paperRole")}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.size")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.size")}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.diaPatti")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.diaPatti")}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.sareePatti")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.sareePatti")}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.netPaper")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.netPaper")}
-                    />
-                  </div>
+                    const handlePaperImage = async (e, idx) => {
+                      const file = e.target.files[0];
+                      const formData = new FormData();
+                      formData.append("images", file);
 
-                  <div className="col-span-3">
-                    {/* Upload Button */}
-                    {!image && (
-                      <Label htmlFor="uploadImage">
-                        <CommonButton
-                          as="span"
-                          className="w-full cursor-pointer"
-                          type="button"
-                        >
-                          <span className="flex items-center justify-center gap-2">
-                            <CircleFadingPlus className="size-5" />
-                            {t("addImage")}
-                          </span>
-                        </CommonButton>
-                      </Label>
-                    )}
+                      const response = await AuthService.imageUpload(formData);
 
-                    {/* Hidden File Input */}
-                    <Input
-                      id="uploadImage"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageUpload}
-                    />
+                      if (response?.data?.success) {
+                        const imageUrl = IMG_URL + response.data.data[0];
 
-                    {/* Image Preview */}
-                    {image && (
-                      <div className="mt-4 relative group border rounded-md overflow-hidden w-fit mx-auto">
-                        <img
-                          src={image.id}
-                          alt="Uploaded"
-                          className="w-40 h-40 object-cover rounded-md"
-                        />
+                        const updated = [...formik.values.paper_details];
+                        updated[idx] = { ...updated[idx], images: imageUrl };
+                        formik.setFieldValue("paper_details", updated);
+                        formik.setFieldTouched(`paper_details[${idx}].images`, true, false);
+                      };
+                    }
 
-                        {/* Remove Button */}
-                        <CommonButton
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-0 right-0 rounded-bl-full h-10 w-10 flex items-center justify-center p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                          onClick={handleRemoveImage}
-                        >
-                          <Trash2 className="text-white size-5" />
-                        </CommonButton>
-                      </div>
-                    )}
-                  </div>
+                    const handleRemovePaperImage = (idx) => {
+                      const updated = [...formik.values.paper_details];
+                      updated[idx] = { ...updated[idx], images: null };
+                      formik.setFieldValue("paper_details", updated);
+                      formik.setFieldTouched(`paper_details[${idx}].images`, true, false);
+                    };
+
+                    return (
+                      <>
+                        <div className="grid gap-2">
+                          <Label>{t("design.designNo")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.designNo")}
+                            name={`paper_details[${i}].design_no`}
+                            value={pap.design_no}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                          />
+                          {designTouched && designError && (
+                            <p className="text-red-500 text-sm mt-1">{designError}</p>
+                          )}
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>{t("design.paperRole")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.paperRole")}
+                            name={`paper_details[${i}].paper_role`}
+                            value={pap.paper_role}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                          />
+                          {roleTouched && roleError && (
+                            <p className="text-red-500 text-sm mt-1">{roleError}</p>
+                          )}
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>{t("design.size")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.size")}
+                            name={`paper_details[${i}].size`}
+                            value={pap.size}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                          />
+                          {sizeTouched && sizeError && (
+                            <p className="text-red-500 text-sm mt-1">{sizeError}</p>
+                          )}
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>{t("design.diaPatti")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.diaPatti")}
+                            name={`paper_details[${i}].dia_patti`}
+                            value={pap.dia_patti}
+                            onChange={(e) => handlePaperChange(e, i, "dia_patti")}
+                            onBlur={formik.handleBlur}
+                          />
+                          {diaPattiTouched && diaPattiError && (
+                            <p className="text-red-500 text-sm mt-1">{diaPattiError}</p>
+                          )}
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>{t("design.sareePatti")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.sareePatti")}
+                            name={`paper_details[${i}].saree_patti`}
+                            value={pap.saree_patti}
+                            onChange={(e) => handlePaperChange(e, i, "saree_patti")}
+                            onBlur={formik.handleBlur}
+                          />
+                          {sareePattiTouched && sareePattiError && (
+                            <p className="text-red-500 text-sm mt-1">{sareePattiError}</p>
+                          )}
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>{t("design.netPaper")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.netPaper")}
+                            name={`paper_details[${i}].net_paper`}
+                            value={pap.net_paper}
+                            readOnly
+                          />
+                          {netPaperTouched && netPaperError && (
+                            <p className="text-red-500 text-sm mt-1">{netPaperError}</p>
+                          )}
+                        </div>
+
+                        {formik.values.paper_details.length > 1 && (
+                          <div className="flex items-center justify-center h-10 w-10 p-0 rounded-lg bg-destructive cursor-pointer"
+                            onClick={() => {
+                              const updated = formik.values.paper_details.filter((_, idx) => idx !== i);
+                              formik.setFieldValue("paper_details", updated);
+                            }}
+                          >
+                            <Trash2 className="text-white size-5" />
+                          </div>
+                        )}
+                        <div className="col-span-3">
+                          {!pap?.images && (
+                            <>
+                              <CommonButton
+                                as="span"
+                                className="w-full cursor-pointer"
+                                type="button"
+                                onClick={() => document.getElementById(`uploadImage_${i}`).click()}
+                              >
+                                <span className="flex items-center justify-center gap-2">
+                                  <CircleFadingPlus className="size-5" />
+                                  {t("addImage")}
+                                </span>
+                              </CommonButton>
+
+                              <Input
+                                id={`uploadImage_${i}`}
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => handlePaperImage(e, i)}
+                              />
+                            </>
+                          )}
+
+                          {pap?.images && (
+                            <div className="mt-4 relative group border rounded-md overflow-hidden w-fit mx-auto">
+                              <img
+                                src={pap?.images}
+                                alt="Uploaded"
+                                className="w-40 h-40 object-cover rounded-md"
+                              />
+
+                              {/* Remove Button */}
+                              <CommonButton
+                                variant="destructive"
+                                size="icon"
+                                className="absolute top-0 right-0 rounded-bl-full h-10 w-10 flex items-center justify-center p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                onClick={() => handleRemovePaperImage(i)}
+                              >
+                                <Trash2 className="text-white size-5" />
+                              </CommonButton>
+                            </div>
+                          )}
+
+                        </div>
+                      </>
+                    )
+                  })}
+
                 </div>
 
                 {/* Stone */}
@@ -377,74 +694,207 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
                     <CommonButton
                       type="button"
                       className="flex items-center justify-center p-0 w-10 h-10"
+                      onClick={() =>
+                        formik.setFieldValue("stone_detail", [
+                          ...formik.values.stone_detail,
+                          { type: "", size: "", color: "", price: "" },
+                        ])
+                      }
                     >
                       <CircleFadingPlus className="size-5" />
                     </CommonButton>
                   </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.type")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.type")}
-                    />
+
+                  {formik.values.stone_detail.map((sto, i) => {
+                    const typeTouched = getIn(formik.touched, `stone_detail[${i}].type`);
+                    const typeError = getIn(formik.errors, `stone_detail[${i}].type`);
+                    const sizeTouched = getIn(formik.touched, `stone_detail[${i}].size`);
+                    const sizeError = getIn(formik.errors, `stone_detail[${i}].size`);
+                    const colorTouched = getIn(formik.touched, `stone_detail[${i}].color`);
+                    const colorError = getIn(formik.errors, `stone_detail[${i}].color`);
+                    const priceTouched = getIn(formik.touched, `stone_detail[${i}].price`);
+                    const priceError = getIn(formik.errors, `stone_detail[${i}].price`);
+
+                    return (
+                      <>
+                        <div className="grid gap-2">
+                          <Label>{t("design.type")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.type")}
+                            name={`stone_detail[${i}].type`}
+                            value={sto.type}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                          />
+                          {typeTouched && typeError && (
+                            <p className="text-red-500 text-sm mt-1">{typeError}</p>
+                          )}
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>{t("design.size")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.size")}
+                            name={`stone_detail[${i}].size`}
+                            value={sto.size}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                          />
+                          {sizeTouched && sizeError && (
+                            <p className="text-red-500 text-sm mt-1">{sizeError}</p>
+                          )}
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>{t("design.color")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.color")}
+                            name={`stone_detail[${i}].color`}
+                            value={sto.color}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                          />
+                          {colorTouched && colorError && (
+                            <p className="text-red-500 text-sm mt-1">{colorError}</p>
+                          )}
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>{t("design.price")}</Label>
+                          <CommonTextField
+                            type="text"
+                            placeholder={t("design.price")}
+                            name={`stone_detail[${i}].price`}
+                            value={sto.price}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                          />
+                          {priceTouched && priceError && (
+                            <p className="text-red-500 text-sm mt-1">{priceError}</p>
+                          )}
+                        </div>
+
+                        {formik.values.stone_detail.length > 1 && (
+                          <div className="flex items-center justify-center h-10 w-10 p-0 rounded-lg bg-destructive cursor-pointer"
+                            onClick={() => {
+                              const updated = formik.values.stone_detail.filter((_, idx) => idx !== i);
+                              formik.setFieldValue("stone_detail", updated);
+                            }}
+                          >
+                            <Trash2 className="text-white size-5" />
+                          </div>
+                        )}
+                      </>
+                    )
+                  })}
+                  <div className="col-span-4 flex items-center gap-3 justify-end">
+                    <h6 className="h6-bold">{t("design.totalPrice")} :</h6>
+                    <h6 className="h6-regular">₹{totalStonePrice.toFixed(2)}</h6>
                   </div>
+                </div>
+              </>
+            )}
+
+            <Separator />
+            {/* Labour */}
+            <h5 className="h5-bold lg:text-lg">{t("design.labor")}</h5>
+            {formik.values.labour.map((lab, i) => {
+              const nameTouched = getIn(formik.touched, `labour[${i}].name`);
+              const nameError = getIn(formik.errors, `labour[${i}].name`);
+              const priceTouched = getIn(formik.touched, `labour[${i}].price`);
+              const priceError = getIn(formik.errors, `labour[${i}].price`);
+
+              return (
+                <div className="grid grid-cols-[auto,130px,40px] items-end gap-3">
                   <div className="grid gap-2">
-                    <Label>{t("design.size")}</Label>
+                    <Label>{t("users.name")}</Label>
                     <CommonTextField
                       type="text"
-                      placeholder={t("design.size")}
+                      placeholder={t("users.name")}
+                      name={`labour[${i}].name`}
+                      value={lab.name}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                     />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>{t("design.color")}</Label>
-                    <CommonTextField
-                      type="text"
-                      placeholder={t("design.color")}
-                    />
+                    {nameTouched && nameError && (
+                      <p className="text-red-500 text-sm mt-1">{nameError}</p>
+                    )}
                   </div>
                   <div className="grid gap-2">
                     <Label>{t("design.price")}</Label>
                     <CommonTextField
                       type="text"
                       placeholder={t("design.price")}
+                      name={`labour[${i}].price`}
+                      value={lab.price}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                     />
+                    {priceTouched && priceError && (
+                      <p className="text-red-500 text-sm mt-1">{priceError}</p>
+                    )}
                   </div>
-                  <div className="col-span-4 flex items-center gap-3 justify-end">
-                    <h6 className="h6-bold">{t("design.totalPrice")} :</h6>
-                    <h6 className="h6-regular">₹00.00</h6>
-                  </div>
+                  {formik.values.labour.length > 1 ? (
+                    <div className="flex items-center justify-center h-10 w-10 p-0 rounded-lg bg-destructive cursor-pointer"
+                      onClick={() => {
+                        const updated = formik.values.labour.filter((_, idx) => idx !== i);
+                        formik.setFieldValue("labour", updated);
+                      }}
+                    >
+                      <Trash2 className="text-white size-5" />
+                    </div>
+                  ) : (
+                    <CommonButton
+                      type="button"
+                      className="flex items-center justify-center p-0 w-10 h-10"
+                      onClick={() =>
+                        formik.setFieldValue("labour", [
+                          ...formik.values.labour,
+                          { name: "", price: "" },
+                        ])
+                      }
+                    >
+                      <CircleFadingPlus className="size-5" />
+                    </CommonButton>
+                  )}
                 </div>
-              </>
-            )}
-            <Separator />
-            {/* Labour */}
-            <h5 className="h5-bold lg:text-lg">{t("design.labor")}</h5>
-            <div className="grid grid-cols-[auto,130px,40px] items-end gap-3">
-              <div className="grid gap-2">
-                <Label>{t("users.name")}</Label>
-                <CommonTextField type="text" placeholder={t("users.name")} />
-              </div>
-              <div className="grid gap-2">
-                <Label>{t("design.price")}</Label>
-                <CommonTextField type="text" placeholder={t("design.price")} />
-              </div>
+              )
+            })}
+            {formik.values.labour.length > 1 && (
               <CommonButton
                 type="button"
                 className="flex items-center justify-center p-0 w-10 h-10"
+                onClick={() =>
+                  formik.setFieldValue("labour", [
+                    ...formik.values.labour,
+                    { name: "", price: "" },
+                  ])
+                }
               >
                 <CircleFadingPlus className="size-5" />
               </CommonButton>
-            </div>
+            )}
             <div className="col-span-3 flex items-center gap-3 justify-end">
               <h6 className="h6-bold">{t("design.finalAmount")} :</h6>
-              <h6 className="h6-regular">₹00.00</h6>
+              <h6 className="h6-regular">₹{totalLabourPrice.toFixed(2)}</h6>
             </div>
             <Separator />
+
             <div className="grid gap-2">
               <Label>{t("design.notes")}</Label>
-              <Textarea type="text" placeholder={t("design.notes")} />
+              <Textarea
+                type="text"
+                placeholder={t("design.notes")}
+                name="notes"
+                value={formik.values.notes}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.notes && formik.errors.notes && (
+                <p className="text-red-500 text-sm mt-1">{formik.errors.notes}</p>
+              )}
             </div>
-          </div>
+          </form>
         </ScrollArea>
       </CommonDialog>
 
@@ -456,7 +906,18 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
         placehorder={"placehorder"}
       />
 
-      <ImageDialogs />
+
+      <AddEditCategory
+        isOpen={isOpenDialog === "category"}
+        setIsOpen={setIsOpenDialog}
+        isEdit={isOpen}
+      />
+
+      <AddEditParty
+        isOpen={isOpenDialog === "party"}
+        setIsOpen={setIsOpenDialog}
+        isEdit={isOpen}
+      />
     </>
   );
 };

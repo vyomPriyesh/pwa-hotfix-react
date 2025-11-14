@@ -90,7 +90,7 @@ const User = () => {
                 <div className="flex sm:flex-col items-center gap-4" onClick={() => handleEditOpen(item)}>
                   <div className="h-10 w-10 sm:h-16 sm:w-16 lg:h-24 lg:w-24 overflow-hidden rounded-lg">
                     <img
-                      src={item?.img || imagePlaceholder}
+                      src={item?.profile_image || imagePlaceholder}
                       alt="User"
                       className="h-full w-full object-cover"
                     />
