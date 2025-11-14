@@ -72,7 +72,10 @@ const Design = () => {
           </div>
           <div>
             <Button
-              onClick={() => setIsOpen("edit")}
+              onClick={() => {
+                setSelectedData('')
+                setIsOpen("edit")
+              }}
               className="flex items-center gap-2"
             >
               <CircleFadingPlus className="size-5" />
