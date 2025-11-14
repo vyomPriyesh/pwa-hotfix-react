@@ -1,28 +1,9 @@
-import { Box, Handshake, LayoutList, User } from "lucide-react";
-import { MdDraw, MdOutlineSpaceDashboard } from "react-icons/md";
-import { SiLibreofficedraw } from "react-icons/si";
+import { Box, Handshake, LayoutList, Newspaper, User } from "lucide-react";
+import { MdDraw, MdOutlinePendingActions, MdOutlineSpaceDashboard } from "react-icons/md";
+import { RiFolderReceivedLine } from "react-icons/ri";
 
 export function getMenuList(pathname) {
   return [
-    // {
-    //   groupLabel: "",
-    //   menus: [
-    //     {
-    //       href: "/",
-    //       label: "dashboard",
-    //       active: pathname === "/",
-    //       icon: MdOutlineSpaceDashboard,
-    //       submenus: [],
-    //     },
-    //     {
-    //       href: "/users",
-    //       label: "users",
-    //       active: pathname === "/users",
-    //       icon: SquareUserIcon,
-    //       submenus: [],
-    //     },
-    //   ],
-    // },
     {
       groupLabel: "",
       menus: [
@@ -31,6 +12,34 @@ export function getMenuList(pathname) {
           label: "dashboard",
           active: pathname === "/",
           icon: MdOutlineSpaceDashboard,
+          submenus: [],
+        },
+         {
+          href: "/design",
+          label: "design",
+          active: pathname === "/deign",
+          icon: MdDraw,
+          submenus: [],
+        },
+         {
+          href: "/challan",
+          label: "chalan",
+          active: pathname === "/challan",
+          icon: Newspaper,
+          submenus: [],
+        },
+         {
+          href: "/pending",
+          label: "pending",
+          active: pathname === "/pending",
+          icon: MdOutlinePendingActions,
+          submenus: [],
+        },
+         {
+          href: "/received-mall",
+          label: "receivedMall",
+          active: pathname === "/received-mall",
+          icon: RiFolderReceivedLine,
           submenus: [],
         },
         {
@@ -59,13 +68,7 @@ export function getMenuList(pathname) {
             },
           ],
         },
-        {
-          href: "/design",
-          label: "design",
-          active: pathname === "/deign",
-          icon: MdDraw,
-          submenus: [],
-        },
+       
       ],
     },
   ];

@@ -26,7 +26,7 @@ const CommonBox = ({ placeholders, frameworks, value, onChange }) => {
           className="justify-between w-full"
         >
           {value
-            ? frameworks.find((framework) => framework.value === value)?.label
+            ? frameworks?.find((framework) => framework.value === value)?.label
             : <span className='line-clamp-1'>{placeholders}</span>}
           <ChevronDown className="opacity-50 max-sm:size-5" />
         </Button>
@@ -37,7 +37,7 @@ const CommonBox = ({ placeholders, frameworks, value, onChange }) => {
           <CommandList>
             <CommandEmpty>{t("noDataFound")}</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {frameworks?.map((framework) => (
                 <CommandItem
                   key={framework.value}
                   value={framework.value}
