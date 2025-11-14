@@ -64,12 +64,12 @@
     "zustand": "^4.5.5"
   },
   "scripts": {
-    "start": "env-cmd -f .env react-scripts start",
-    "start:dev": "env-cmd -f .env.development react-scripts start",
-    "start:prod": "env-cmd -f .env.prod react-scripts start",
-    "build": "react-scripts build",
-    "build:dev": "env-cmd -f .env.development react-scripts build",
-    "build:prod": "env-cmd -f .env.prod react-scripts build",
+    "start": "node init && env-cmd -f .env react-scripts start",
+    "start:dev": "node init && env-cmd -f .env.development react-scripts start",
+    "start:prod": "node init && env-cmd -f .env.prod react-scripts start",
+    "build": "node init && react-scripts build",
+    "build:dev": "node init && env-cmd -f .env.development react-scripts build",
+    "build:prod": "node init && env-cmd -f .env.prod react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
