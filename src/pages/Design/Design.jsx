@@ -88,35 +88,38 @@ const Design = () => {
               <Card
                 key={index}
                 className="shadow-user_card relative overflow-hidden cursor-pointer"
-                onClick={() => {
-                  setSelectedData(item)
-                  setIsOpen("edit")
-                }}
               >
-                <div className="h-24 lg:h-32 overflow-hidden w-full">
-                  <img
-                    src={item?.images[0] || imagePlaceholder}
-                    alt="User"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="grid gap-1 p-3.5">
-                  <div className="flex items-center gap-1">
-                    <h4 className="p-medium">Design No.: </h4>
-                    <h4 className="p-regular">{item?.design_no}</h4>
+                <div
+                  onClick={() => {
+                    setSelectedData(item)
+                    setIsOpen("edit")
+                  }}
+                >
+                  <div className="h-24 lg:h-32 overflow-hidden w-full">
+                    <img
+                      src={item?.images[0] || imagePlaceholder}
+                      alt="User"
+                      className="h-full w-full object-cover"
+                    />
                   </div>
-                  <div className="flex items-center gap-1">
-                    <h4 className="p-medium">Party: </h4>
-                    <h4 className="p-regular">{item?.party?.name}</h4>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <h4 className="p-medium">Category: </h4>
-                    <h4 className="p-regular">{item?.category?.name}</h4>
-                  </div>
-                  {/* <div className="flex items-center gap-1">
+                  <div className="grid gap-1 p-3.5">
+                    <div className="flex items-center gap-1">
+                      <h4 className="p-medium">Design No.: </h4>
+                      <h4 className="p-regular">{item?.design_no}</h4>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <h4 className="p-medium">Party: </h4>
+                      <h4 className="p-regular">{item?.party?.name}</h4>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <h4 className="p-medium">Category: </h4>
+                      <h4 className="p-regular">{item?.category?.name}</h4>
+                    </div>
+                    {/* <div className="flex items-center gap-1">
                     <h4 className="p-medium">Rate: </h4>
                     <h4 className="p-regular">₹{item?.rate}</h4>
                   </div> */}
+                  </div>
                 </div>
 
                 <div
