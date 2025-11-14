@@ -176,6 +176,34 @@ const AddEditDesign = ({ selectedData, isOpen, setIsOpen }) => {
     },
   })
 
+  const totalPrice = formik.values.material.reduce((acc, mat) => {
+    const price = parseFloat(mat.price) || 0;
+    return acc + price;
+  }, 0);
+
+  const totalStonePrice = formik.values.stone_detail.reduce((acc, mat) => {
+    const price = parseFloat(mat.price) || 0;
+    return acc + price;
+  }, 0);
+
+  const totalLabourPrice = formik.values.labour.reduce((acc, mat) => {
+    const price = parseFloat(mat.price) || 0;
+    return acc + price;
+  }, 0);
+
+  const handlePaperChange = (e, idx, field) => {
+    const value = e.target.value;
+    const updated = [...formik.values.paper_details];
+
+    updated[idx] = { ...updated[idx], [field]: value };
+
+    const sareePatti = parseFloat(updated[idx].saree_patti) || 0;
+    const diaPatti = parseFloat(updated[idx].dia_patti) || 0;
+    updated[idx].net_paper = diaPatti ? (sareePatti / diaPatti).toFixed(2) : "0";
+
+    formik.setFieldValue("paper_details", updated);
+  };
+
   return (
     <>
 
@@ -448,7 +476,7 @@ const AddEditDesign = ({ selectedData, isOpen, setIsOpen }) => {
                 )}
                 <div className="flex items-center gap-3 justify-end">
                   <h6 className="h6-bold">{t("design.totalPrice")} :</h6>
-                  <h6 className="h6-regular">₹00.00</h6>
+                  <h6 className="h6-regular">₹{totalPrice.toFixed(2)}</h6>
                 </div>
               </>
             ) : (
@@ -561,7 +589,7 @@ const AddEditDesign = ({ selectedData, isOpen, setIsOpen }) => {
                             placeholder={t("design.diaPatti")}
                             name={`paper_details[${i}].dia_patti`}
                             value={pap.dia_patti}
-                            onChange={formik.handleChange}
+                            onChange={(e) => handlePaperChange(e, i, "dia_patti")}
                             onBlur={formik.handleBlur}
                           />
                           {diaPattiTouched && diaPattiError && (
@@ -575,7 +603,7 @@ const AddEditDesign = ({ selectedData, isOpen, setIsOpen }) => {
                             placeholder={t("design.sareePatti")}
                             name={`paper_details[${i}].saree_patti`}
                             value={pap.saree_patti}
-                            onChange={formik.handleChange}
+                            onChange={(e) => handlePaperChange(e, i, "saree_patti")}
                             onBlur={formik.handleBlur}
                           />
                           {sareePattiTouched && sareePattiError && (
@@ -589,8 +617,7 @@ const AddEditDesign = ({ selectedData, isOpen, setIsOpen }) => {
                             placeholder={t("design.netPaper")}
                             name={`paper_details[${i}].net_paper`}
                             value={pap.net_paper}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
+                            readOnly
                           />
                           {netPaperTouched && netPaperError && (
                             <p className="text-red-500 text-sm mt-1">{netPaperError}</p>
@@ -661,6 +688,24 @@ const AddEditDesign = ({ selectedData, isOpen, setIsOpen }) => {
 
                 {/* Stone */}
                 <div className="grid grid-cols-3 gap-3">
+                  <div className="flex items-center justify-between gap-3 col-span-4">
+                    <h5 className="h5-bold lg:text-lg ">
+                      {t("design.stoneDetail")}
+                    </h5>
+                    <CommonButton
+                      type="button"
+                      className="flex items-center justify-center p-0 w-10 h-10"
+                      onClick={() =>
+                        formik.setFieldValue("stone_detail", [
+                          ...formik.values.stone_detail,
+                          { type: "", size: "", color: "", price: "" },
+                        ])
+                      }
+                    >
+                      <CircleFadingPlus className="size-5" />
+                    </CommonButton>
+                  </div>
+
                   {formik.values.stone_detail.map((sto, i) => {
                     const typeTouched = getIn(formik.touched, `stone_detail[${i}].type`);
                     const typeError = getIn(formik.errors, `stone_detail[${i}].type`);
@@ -673,23 +718,6 @@ const AddEditDesign = ({ selectedData, isOpen, setIsOpen }) => {
 
                     return (
                       <>
-                        <div className="flex items-center justify-between gap-3 col-span-4">
-                          <h5 className="h5-bold lg:text-lg ">
-                            {t("design.stoneDetail")}
-                          </h5>
-                          <CommonButton
-                            type="button"
-                            className="flex items-center justify-center p-0 w-10 h-10"
-                            onClick={() =>
-                              formik.setFieldValue("stone_detail", [
-                                ...formik.values.stone_detail,
-                                { type: "", size: "", color: "", price: "" },
-                              ])
-                            }
-                          >
-                            <CircleFadingPlus className="size-5" />
-                          </CommonButton>
-                        </div>
                         <div className="grid gap-2">
                           <Label>{t("design.type")}</Label>
                           <CommonTextField
@@ -762,7 +790,7 @@ const AddEditDesign = ({ selectedData, isOpen, setIsOpen }) => {
                   })}
                   <div className="col-span-4 flex items-center gap-3 justify-end">
                     <h6 className="h6-bold">{t("design.totalPrice")} :</h6>
-                    <h6 className="h6-regular">₹00.00</h6>
+                    <h6 className="h6-regular">₹{totalStonePrice.toFixed(2)}</h6>
                   </div>
                 </div>
               </>
@@ -849,7 +877,7 @@ const AddEditDesign = ({ selectedData, isOpen, setIsOpen }) => {
             )}
             <div className="col-span-3 flex items-center gap-3 justify-end">
               <h6 className="h6-bold">{t("design.finalAmount")} :</h6>
-              <h6 className="h6-regular">₹00.00</h6>
+              <h6 className="h6-regular">₹{totalLabourPrice.toFixed(2)}</h6>
             </div>
             <Separator />
 
