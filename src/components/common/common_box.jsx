@@ -12,13 +12,12 @@ import { Button } from '../ui/button';
 
 
 
-const CommonBox = ({placeholders , frameworks}) => {
+const CommonBox = ({ placeholders, frameworks, value, onChange }) => {
   const { t } = useTranslation("common");
- const [open, setOpen] = useState(false)
-  const [value, setValue] = useState("");
+  const [open, setOpen] = useState(false)
 
-    return (
-      <Popover open={open} onOpenChange={setOpen}>
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -43,7 +42,7 @@ const CommonBox = ({placeholders , frameworks}) => {
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
+                    onChange(currentValue === value ? "" : currentValue)
                     setOpen(false)
                   }}
                 >

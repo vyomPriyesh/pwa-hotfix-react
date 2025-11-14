@@ -18,30 +18,18 @@ import { getIn, useFormik } from "formik";
 import * as Yup from "yup";
 import AuthService from "../../service/auth.service";
 import config from "../../config";
+import { useSelector } from "react-redux";
+import AddEditCategory from "../Category/AddEditCategory";
+import AddEditParty from "../Party/AddEditParty";
 
-const frameworks = [
-  {
-    value: "admin",
-    label: "Admin",
-  },
-  {
-    value: "work",
-    label: "Job Work",
-  },
-  {
-    value: "tempo",
-    label: "Tempo Driver",
-  },
-];
-
-const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
+const AddEditDesign = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation("common");
   const [createName, setcreateName] = useState(false);
-  const [advance, setAdvance] = useState(false);
   const [imageDialog, setImageDialog] = useState(false);
-  // const [images, setImages] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
   const IMG_URL = config.baseImage;
+  const { data } = useSelector(state => state?.dropdown)
 
   const handleImageUpload = async (e) => {
 
@@ -81,6 +69,7 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
   };
 
   const initialValues = {
+    advance: false,
     images: [],
     date: "",
     designNo: "",
@@ -97,7 +86,6 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
     images: Yup.array()
       .min(1, "Please upload at least one image.")
       .required("Please upload at least one image."),
-    // date: Yup.string().required("Date is required"),
     designNo: Yup.string().required("Design No is required"),
     category: Yup.string().required("Category is required"),
     party: Yup.string().required("Party Name is required"),
@@ -176,7 +164,7 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
             >
               {t("cancel")}
             </CommonButton>
-            <CommonButton className="lg:w-40" onClick={formik.handleSubmit} disabled={formik.isSubmitting}>
+            <CommonButton className="lg:w-40" onClick={formik.handleSubmit} >
               {t("add")}
             </CommonButton>
           </div>
@@ -279,11 +267,11 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
                   <div>
                     <CommonBox
                       placeholders={t("design.selectCategory")}
-                      frameworks={frameworks}
+                      frameworks={data?.data?.categories}
                       name="category"
                       value={formik.values.category}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
+                      onChange={(val) => formik.setFieldValue("category", val)}
+                      onBlur={() => formik.setFieldTouched("category", true)}
                     />
                     {formik.touched.category && formik.errors.category && (
                       <p className="text-red-500 text-sm mt-1">{formik.errors.category}</p>
@@ -291,7 +279,7 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
                   </div>
                   <CommonButton
                     type="button"
-                    onClick={() => setcreateName(true)}
+                    onClick={() => setIsOpenDialog("category")}
                     className="flex items-center justify-center p-0 w-10 h-10"
                   >
                     <CircleFadingPlus className="size-5" />
@@ -304,11 +292,11 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
                   <div>
                     <CommonBox
                       placeholders={t("design.selectPartyName")}
-                      frameworks={frameworks}
+                      frameworks={data?.data?.parties}
                       name="party"
                       value={formik.values.party}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
+                      onChange={(val) => formik.setFieldValue("party", val)}
+                      onBlur={() => formik.setFieldTouched("party", true)}
                     />
                     {formik.touched.party && formik.errors.party && (
                       <p className="text-red-500 text-sm mt-1">{formik.errors.party}</p>
@@ -316,7 +304,7 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
                   </div>
                   <CommonButton
                     type="button"
-                    onClick={() => setcreateName(true)}
+                    onClick={() => setIsOpenDialog("party")}
                     className="flex items-center justify-center p-0 w-10 h-10"
                   >
                     <CircleFadingPlus className="size-5" />
@@ -328,15 +316,12 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
             <div className="flex items-center col-span-2 gap-2">
               <Checkbox
                 id="terms"
-                checked={advance}
-                onCheckedChange={(checked) => {
-                  setAdvance(checked);
-                  formik.setFieldValue("advance", checked);
-                }}
+                checked={formik.values.advance}
+                onCheckedChange={(checked) => formik.setFieldValue("advance", checked)}
               />
               <Label htmlFor="terms">{t("design.advance")}</Label>
             </div>
-            {!advance ? (
+            {!formik.values.advance ? (
               <>
                 {/* Material */}
                 <h5 className="h5-bold lg:text-lg">{t("design.material")}</h5>
@@ -370,7 +355,7 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
                           type="text"
                           placeholder={t("design.quantity")}
                           name={`materials[${i}].quantity`}
-                          value={mat.item}
+                          value={mat.quantity}
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                         />
@@ -384,7 +369,7 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
                           type="text"
                           placeholder={t("design.price")}
                           name={`materials[${i}].price`}
-                          value={mat.item}
+                          value={mat.price}
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                         />
@@ -863,6 +848,19 @@ const AddEditDesign = ({ user, isOpen, setIsOpen }) => {
         title={t("category")}
         label={"label"}
         placehorder={"placehorder"}
+      />
+
+
+      <AddEditCategory
+        isOpen={isOpenDialog === "category"}
+        setIsOpen={setIsOpenDialog}
+        isEdit={isOpen}
+      />
+
+      <AddEditParty
+        isOpen={isOpenDialog === "party"}
+        setIsOpen={setIsOpenDialog}
+        isEdit={isOpen}
       />
     </>
   );
