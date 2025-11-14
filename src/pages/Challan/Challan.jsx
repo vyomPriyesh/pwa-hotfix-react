@@ -19,7 +19,7 @@ const designListData = [
     rate: "15800",
     date: "15/08/2025",
     job: "845",
-    piece:"108",
+    piece: "108",
     cPerson: "Priyank Mangukiya",
     mobile: "9876543210",
   },
@@ -33,7 +33,7 @@ const designListData = [
     rate: "15800",
     date: "15/08/2025",
     job: "845",
-    piece:"108",
+    piece: "108",
     cPerson: "Priyank Mangukiya",
     mobile: "9876543210",
   },
@@ -43,11 +43,26 @@ const imagePlaceholder =
   "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=";
 
 const Challan = () => {
+
   const { t } = useTranslation("common");
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [userList, setUserList] = useState([]);
+
   const [inOut, setInOut] = useState(false)
+  const [addEdit, setAddEdit] = useState(false)
+  const [type, setType] = useState(null)
+
+  // const handleCloseINout = () => {
+  //   setIsOpen(false)
+  //   if (type) {
+  //     setAddEdit(true)
+  //   }
+  // }
+
+  const handleCloseINout = (type) => {
+    setType(type)
+    setAddEdit(true)
+  }
 
   return (
     <div className="grid gap-4 lg:gap-6">
@@ -68,7 +83,7 @@ const Challan = () => {
           </div>
           <div>
             <Button
-              onClick={() => setIsOpen("edit")}
+              onClick={() => setIsOpen(true)}
               className="flex items-center gap-2"
             >
               <CircleFadingPlus className="size-5" />
@@ -145,10 +160,8 @@ const Challan = () => {
           )}
         </div>
       </Card>
-
-      <InOutDialog isOpen={isOpen === "edit"}
-        setIsOpen={setIsOpen}
-        isEdit={isOpen} />
+      <InOutDialog open={isOpen} setClose={() => setIsOpen(false)} onSubmit={handleCloseINout} />
+      <AddChallan open={addEdit} setClose={() => setAddEdit(false)} type={type} />
     </div>
   );
 };

@@ -12,19 +12,20 @@ import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
 import CommonBox from "../../components/common/common_box";
 import { Textarea } from "../../components/ui/textarea";
 
-const AddChallan = ({ inOut, isOpen, setIsOpen, setInOut }) => {
+const AddChallan = ({ type, open, setClose }) => {
+
   const { t } = useTranslation("common");
   const [imageDialog, setImageDialog] = useState(false);
-  
+
 
   // 🔹 Handle cancel
   const handleCancel = () => {
-    setIsOpen("");
+    setClose();
   };
 
   // 🔹 Handle submit
   const handleSubmit = () => {
-    setIsOpen("");
+    setClose();
   };
 
   // Image Dialog
@@ -59,10 +60,10 @@ const AddChallan = ({ inOut, isOpen, setIsOpen, setInOut }) => {
   return (
     <>
       <CommonDialog
-        isOpen={isOpen}
+        isOpen={open}
         onClose={handleCancel}
         size="lg"
-        title={inOut == true ? <>{t("challan.in")}</>:<>{t("challan.out")}</>}
+        title={type == 'in' ? <>{t("challan.in")}</> : <>{t("challan.out")}</>}
         footer={
           <div className="flex gap-2">
             <CommonButton
