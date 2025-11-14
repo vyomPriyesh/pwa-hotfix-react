@@ -6,8 +6,8 @@ import { CircleFadingPlus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import AddEditDesign from "./AddEditDesign";
 import designService from "../../service/design.service";
-import Delete from "../../components/common/Delete";
 import CommonPagination from "../../components/widgets/common_pagination";
+import Delete from "../Category/Delete";
 
 const imagePlaceholder =
   "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=";
