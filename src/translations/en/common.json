@@ -24,7 +24,9 @@
     "party": "Party",
     "category": "Category",
     "design": "Design",
-    "chalan": "Challan"
+    "chalan": "Challan",
+    "pending":"Pending",
+    "receivedMall":"Received Mall"
   },
   "auth": {
     "signInToYourAccount": "Sign in to your account",

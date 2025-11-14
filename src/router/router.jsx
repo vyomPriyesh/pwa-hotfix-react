@@ -8,6 +8,8 @@ import Party from "../pages/Party/Party";
 import Category from "../pages/Category/Category";
 import Design from "../pages/Design/Design";
 import Challan from "../pages/Challan/Challan";
+import ReceivedMall from "../pages/ReceivedMall/ReceivedMall";
+import Pending from "../pages/Pending/Pending";
 
 export const PrivateRoute = ({ children }) => {
   const user = localStorage.getItem("admin_store");
@@ -52,6 +54,14 @@ const routes = (isLoggedIn) => [
       {
         element: <Challan />,
         path: "/challan",
+      },
+      {
+        element: <Pending />,
+        path: "/pending",
+      },
+      {
+        element: <ReceivedMall />,
+        path: "/received-mall",
       },
     ],
   },
