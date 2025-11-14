@@ -4,39 +4,45 @@ import { X } from "lucide-react";
 import CommonButton from "../../components/widgets/common_button";
 import { useTranslation } from "react-i18next";
 
-const InOutDialog = ({ open, setClose ,onSubmit}) => {
+import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
 
+import { Label } from "../../components/ui/label";
+
+const InOutDialog = ({ open, setClose, onSubmit }) => {
   const { t } = useTranslation("common");
   const [inOut, setInOut] = useState(null);
 
-  // 🔹 Handle cancel
   const handleCancel = () => {
     setClose();
-    setInOut(null)
+    setInOut(null);
   };
 
-  // 🔹 Handle submit
   const handleSubmit = () => {
     onSubmit(inOut);
   };
-  
+
   return (
     <>
       <CommonDialog
         isOpen={open}
         onClose={handleCancel}
-        size="default"
+        size="sm"
         title=""
         footer={
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full">
             <CommonButton
               variant="destructive"
-              className="lg:w-40"
+              className="lg:w-full"
               onClick={handleCancel}
             >
               {t("cancel")}
             </CommonButton>
-            <CommonButton className="lg:w-40" onClick={handleSubmit}>
+
+            <CommonButton
+              className="lg:w-full"
+              onClick={handleSubmit}
+              disabled={!inOut}
+            >
               {t("next")}
             </CommonButton>
           </div>
@@ -49,27 +55,47 @@ const InOutDialog = ({ open, setClose ,onSubmit}) => {
         >
           <X className="size-6" />
         </span>
-        <div className="flex items-center justify-center gap-4">
-          {/* 🔥 Selection Boxes */}
-          <div className="flex items-center justify-center gap-4 py-4">
 
-            {/* FIRST BOX → sets inOut = true */}
-            <div
-              onClick={() => setInOut("in")}
-              className={`size-36 cursor-pointer rounded-lg shadow-user_card duration-200 border 
-              ${inOut === 'in' ? "border-green-700" : "border-transparent"}
-            `}
-            >IN</div>
+        {/* 🔥 RADIO GROUP with BOX STYLE */}
+        <RadioGroup
+          value={inOut || ""}
+          onValueChange={(val) => setInOut(val)}
+          className="flex items-center justify-center gap-6 mt-4"
+        >
+          {/* IN BOX */}
+          <Label
+            htmlFor="in"
+            className={`size-36 flex flex-col items-center gap-3.5 justify-center cursor-pointer rounded-lg shadow-user_card border-2 text-lg font-medium
+            ${inOut === "in" ? "border-green-600" : "border-transparent"}
+          `}
+          >
+            <span className="size-16 text-white flex items-center justify-center bg-green-600 rounded-lg mx-auto">IN</span>
+            <RadioGroupItem
+              className={`text-green-600 border-2 ${
+                inOut === "in" ? "!border-green-600" : ""
+              } `}
+              id="in"
+              value="in"
+            />
+          </Label>
 
-            {/* SECOND BOX → sets inOut = false */}
-            <div
-              onClick={() => setInOut("out")}
-              className={`size-36 cursor-pointer rounded-lg shadow-user_card duration-200 border 
-              ${inOut === 'out' ? "border-red-700" : "border-transparent"}
-            `}
-            >OUT</div>
-          </div>
-        </div>
+          {/* OUT BOX */}
+          <Label
+            htmlFor="out"
+            className={`size-36 flex flex-col items-center gap-3.5 justify-center cursor-pointer rounded-lg shadow-user_card border-2 text-lg font-medium
+            ${inOut === "out" ? "border-destructive" : "border-transparent"}
+          `}
+          >
+            <span className="size-16 text-white flex items-center justify-center bg-destructive rounded-lg mx-auto">OUT</span>
+            <RadioGroupItem
+              className={`text-destructive border-2 ${
+                inOut === "out" ? "!border-destructive" : ""
+              } `}
+              id="out"
+              value="out"
+            />
+          </Label>
+        </RadioGroup>
       </CommonDialog>
     </>
   );
