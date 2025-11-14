@@ -21,6 +21,7 @@ import config from "../../config";
 import { useSelector } from "react-redux";
 import AddEditCategory from "../Category/AddEditCategory";
 import AddEditParty from "../Party/AddEditParty";
+import designService from "../../service/design.service";
 
 const AddEditDesign = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation("common");
@@ -69,28 +70,28 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
   };
 
   const initialValues = {
-    advance: false,
-    images: [],
-    date: "",
-    designNo: "",
     category: "",
     party: "",
+    design_no: "",
     notes: "",
-    materials: [{ item: "", quantity: "", price: "" }],
-    labours: [{ name: "", price: "" }],
-    paper: [{ designNo: "", paperRole: "", size: "", diaPatti: "", sareePatti: "", netPaper: "", image: null }],
-    stones: [{ type: "", size: "", color: "", price: "" }],
+    images: [],
+    labour: [{ name: "", price: "" }],
+    material: [{ item: "", qty: "", price: "" }],
+    advance: false,
+    paper_details: [{ design_no: "", paper_role: "", size: "", dia_patti: "", saree_patti: "", net_paper: "", images: null }],
+    stone_detail: [{ type: "", size: "", color: "", price: "" }],
+    // date: "",
   }
 
   const validationSchema = Yup.object({
     images: Yup.array()
       .min(1, "Please upload at least one image.")
       .required("Please upload at least one image."),
-    designNo: Yup.string().required("Design No is required"),
+    design_no: Yup.string().required("Design No is required"),
     category: Yup.string().required("Category is required"),
     party: Yup.string().required("Party Name is required"),
     notes: Yup.string().required("notes is required"),
-    labours: Yup.array()
+    labour: Yup.array()
       .of(
         Yup.object({
           name: Yup.string().required("Name is required"),
@@ -98,33 +99,33 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
         })
       )
       .min(1, "At least one labour required"),
-    materials: Yup.array().when("advance", {
+    material: Yup.array().when("advance", {
       is: false,
       then: (schema) =>
         schema.of(
           Yup.object({
             item: Yup.string().required("Item required"),
-            quantity: Yup.number().typeError("Must be number").required("Quantity required"),
+            qty: Yup.number().typeError("Must be number").required("Quantity required"),
             price: Yup.number().typeError("Must be number").required("Price required"),
           })
         ),
     }),
-    paper: Yup.array().when("advance", {
+    paper_details: Yup.array().when("advance", {
       is: true,
       then: (schema) =>
         schema.of(
           Yup.object({
-            designNo: Yup.string().required("Design No required"),
-            paperRole: Yup.string().required("Paper Role required"),
+            design_no: Yup.string().required("Design No required"),
+            paper_role: Yup.string().required("Paper Role required"),
             size: Yup.string().required("Size required"),
-            diaPatti: Yup.string().required("diaPatti required"),
-            sareePatti: Yup.string().required("sareePatti required"),
-            netPaper: Yup.string().required("netPaper required"),
-            image: Yup.mixed().nullable().required("Please upload image."),
+            dia_patti: Yup.string().required("diaPatti required"),
+            saree_patti: Yup.string().required("sareePatti required"),
+            net_paper: Yup.string().required("netPaper required"),
+            images: Yup.mixed().nullable().required("Please upload image."),
           })
         ),
     }),
-    stones: Yup.array().when("advance", {
+    stone_detail: Yup.array().when("advance", {
       is: true,
       then: (schema) =>
         schema.of(
@@ -142,8 +143,24 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
     initialValues,
     validationSchema,
     enableReinitialize: true,
-    onSubmit: (values) => {
-      console.log("✅ Submitted values:", { values });
+    onSubmit: async (values) => {
+      
+      const payload = {
+        ...values,
+        material: values.advance ? [] : values.material,
+        paper_details: values.advance ? values.paper_details : [],
+        stone_detail: values.advance ? values.stone_detail : [],
+      }
+      console.log("values:", { payload });
+      try {
+        const response = await designService.addDesign(payload);
+        if (response?.data?.success) {
+          setIsOpen("");
+          alert(response?.data?.message);
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
     },
   })
 
@@ -252,13 +269,13 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                 <CommonTextField
                   type="text"
                   placeholder={t("designNoPlaceholder")}
-                  name="designNo"
-                  value={formik.values.designNo}
+                  name="design_no"
+                  value={formik.values.design_no}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                {formik.touched.designNo && formik.errors.designNo && (
-                  <p className="text-red-500 text-sm mt-1">{formik.errors.designNo}</p>
+                {formik.touched.design_no && formik.errors.design_no && (
+                  <p className="text-red-500 text-sm mt-1">{formik.errors.design_no}</p>
                 )}
               </div>
               <div className="grid gap-2">
@@ -325,13 +342,13 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
               <>
                 {/* Material */}
                 <h5 className="h5-bold lg:text-lg">{t("design.material")}</h5>
-                {formik.values.materials.map((mat, i) => {
-                  const itemTouched = getIn(formik.touched, `materials[${i}].item`);
-                  const itemError = getIn(formik.errors, `materials[${i}].item`);
-                  const qtyTouched = getIn(formik.touched, `materials[${i}].quantity`);
-                  const qtyError = getIn(formik.errors, `materials[${i}].quantity`);
-                  const priceTouched = getIn(formik.touched, `materials[${i}].price`);
-                  const priceError = getIn(formik.errors, `materials[${i}].price`);
+                {formik.values.material.map((mat, i) => {
+                  const itemTouched = getIn(formik.touched, `material[${i}].item`);
+                  const itemError = getIn(formik.errors, `material[${i}].item`);
+                  const qtyTouched = getIn(formik.touched, `material[${i}].qty`);
+                  const qtyError = getIn(formik.errors, `material[${i}].qty`);
+                  const priceTouched = getIn(formik.touched, `material[${i}].price`);
+                  const priceError = getIn(formik.errors, `material[${i}].price`);
 
                   return (
                     <div className="grid grid-cols-[auto,80px,120px,40px] items-end gap-3">
@@ -340,7 +357,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                         <CommonTextField
                           type="text"
                           placeholder={t("design.item")}
-                          name={`materials[${i}].item`}
+                          name={`material[${i}].item`}
                           value={mat.item}
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
@@ -354,7 +371,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                         <CommonTextField
                           type="text"
                           placeholder={t("design.quantity")}
-                          name={`materials[${i}].quantity`}
+                          name={`material[${i}].qty`}
                           value={mat.quantity}
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
@@ -368,7 +385,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                         <CommonTextField
                           type="text"
                           placeholder={t("design.price")}
-                          name={`materials[${i}].price`}
+                          name={`material[${i}].price`}
                           value={mat.price}
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
@@ -377,11 +394,11 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           <p className="text-red-500 text-sm mt-1">{priceError}</p>
                         )}
                       </div>
-                      {formik.values.materials.length > 1 ? (
+                      {formik.values.material.length > 1 ? (
                         <div className="flex items-center justify-center h-10 w-10 p-0 rounded-lg bg-destructive cursor-pointer"
                           onClick={() => {
-                            const updated = formik.values.materials.filter((_, idx) => idx !== i);
-                            formik.setFieldValue("materials", updated);
+                            const updated = formik.values.material.filter((_, idx) => idx !== i);
+                            formik.setFieldValue("material", updated);
                           }}
                         >
                           <Trash2 className="text-white size-5" />
@@ -391,9 +408,9 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           type="button"
                           className="flex items-center justify-center p-0 w-10 h-10"
                           onClick={() =>
-                            formik.setFieldValue("materials", [
-                              ...formik.values.materials,
-                              { item: "", quantity: "", price: "" },
+                            formik.setFieldValue("material", [
+                              ...formik.values.material,
+                              { item: "", qty: "", price: "" },
                             ])
                           }
                         >
@@ -403,14 +420,14 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                     </div>
                   )
                 })}
-                {formik.values.materials.length > 1 && (
+                {formik.values.material.length > 1 && (
                   <CommonButton
                     type="button"
                     className="flex items-center justify-center p-0 w-10 h-10"
                     onClick={() =>
-                      formik.setFieldValue("materials", [
-                        ...formik.values.materials,
-                        { item: "", quantity: "", price: "" },
+                      formik.setFieldValue("material", [
+                        ...formik.values.material,
+                        { item: "", qty: "", price: "" },
                       ])
                     }
                   >
@@ -434,28 +451,28 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                       type="button"
                       className="flex items-center justify-center p-0 w-10 h-10"
                       onClick={() =>
-                        formik.setFieldValue("paper", [
-                          ...formik.values.paper,
-                          { designNo: "", paperRole: "", size: "", diaPatti: "", sareePatti: "", netPaper: "", image: null },
+                        formik.setFieldValue("paper_details", [
+                          ...formik.values.paper_details,
+                          { design_no: "", paper_role: "", size: "", dia_patti: "", saree_patti: "", net_paper: "", images: null },
                         ])
                       }
                     >
                       <CircleFadingPlus className="size-5" />
                     </CommonButton>
                   </div>
-                  {formik.values.paper.map((pap, i) => {
-                    const designTouched = getIn(formik.touched, `paper[${i}].designNo`);
-                    const designError = getIn(formik.errors, `paper[${i}].designNo`);
-                    const roleTouched = getIn(formik.touched, `paper[${i}].paperRole`);
-                    const roleError = getIn(formik.errors, `paper[${i}].paperRole`);
-                    const sizeTouched = getIn(formik.touched, `paper[${i}].size`);
-                    const sizeError = getIn(formik.errors, `paper[${i}].size`);
-                    const diaPattiTouched = getIn(formik.touched, `paper[${i}].diaPatti`);
-                    const diaPattiError = getIn(formik.errors, `paper[${i}].diaPatti`);
-                    const sareePattiTouched = getIn(formik.touched, `paper[${i}].sareePatti`);
-                    const sareePattiError = getIn(formik.errors, `paper[${i}].sareePatti`);
-                    const netPaperTouched = getIn(formik.touched, `paper[${i}].netPaper`);
-                    const netPaperError = getIn(formik.errors, `paper[${i}].netPaper`);
+                  {formik.values.paper_details.map((pap, i) => {
+                    const designTouched = getIn(formik.touched, `paper_details[${i}].design_no`);
+                    const designError = getIn(formik.errors, `paper_details[${i}].design_no`);
+                    const roleTouched = getIn(formik.touched, `paper_details[${i}].paper_role`);
+                    const roleError = getIn(formik.errors, `paper_details[${i}].paper_role`);
+                    const sizeTouched = getIn(formik.touched, `paper_details[${i}].size`);
+                    const sizeError = getIn(formik.errors, `paper_details[${i}].size`);
+                    const diaPattiTouched = getIn(formik.touched, `paper_details[${i}].dia_patti`);
+                    const diaPattiError = getIn(formik.errors, `paper_details[${i}].dia_patti`);
+                    const sareePattiTouched = getIn(formik.touched, `paper_details[${i}].saree_patti`);
+                    const sareePattiError = getIn(formik.errors, `paper_details[${i}].saree_patti`);
+                    const netPaperTouched = getIn(formik.touched, `paper_details[${i}].net_paper`);
+                    const netPaperError = getIn(formik.errors, `paper_details[${i}].net_paper`);
 
                     const handlePaperImage = async (e, idx) => {
                       const file = e.target.files[0];
@@ -467,18 +484,18 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                       if (response?.data?.success) {
                         const imageUrl = IMG_URL + response.data.data[0];
 
-                        const updated = [...formik.values.paper];
+                        const updated = [...formik.values.paper_details];
                         updated[idx] = { ...updated[idx], image: imageUrl };
-                        formik.setFieldValue("paper", updated);
-                        formik.setFieldTouched(`paper[${idx}].image`, true, false);
+                        formik.setFieldValue("paper_details", updated);
+                        formik.setFieldTouched(`paper_details[${idx}].images`, true, false);
                       };
                     }
 
                     const handleRemovePaperImage = (idx) => {
-                      const updated = [...formik.values.paper];
+                      const updated = [...formik.values.paper_details];
                       updated[idx] = { ...updated[idx], image: null };
-                      formik.setFieldValue("paper", updated);
-                      formik.setFieldTouched(`paper[${idx}].image`, true, false);
+                      formik.setFieldValue("paper_details", updated);
+                      formik.setFieldTouched(`paper_details[${idx}].images`, true, false);
                     };
 
                     return (
@@ -488,8 +505,8 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           <CommonTextField
                             type="text"
                             placeholder={t("design.designNo")}
-                            name={`paper[${i}].designNo`}
-                            value={pap.designNo}
+                            name={`paper_details[${i}].design_no`}
+                            value={pap.design_no}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                           />
@@ -502,8 +519,8 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           <CommonTextField
                             type="text"
                             placeholder={t("design.paperRole")}
-                            name={`paper[${i}].paperRole`}
-                            value={pap.paperRole}
+                            name={`paper_details[${i}].paper_role`}
+                            value={pap.paper_role}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                           />
@@ -516,7 +533,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           <CommonTextField
                             type="text"
                             placeholder={t("design.size")}
-                            name={`paper[${i}].size`}
+                            name={`paper_details[${i}].size`}
                             value={pap.size}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
@@ -530,8 +547,8 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           <CommonTextField
                             type="text"
                             placeholder={t("design.diaPatti")}
-                            name={`paper[${i}].diaPatti`}
-                            value={pap.diaPatti}
+                            name={`paper_details[${i}].dia_patti`}
+                            value={pap.dia_patti}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                           />
@@ -544,8 +561,8 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           <CommonTextField
                             type="text"
                             placeholder={t("design.sareePatti")}
-                            name={`paper[${i}].sareePatti`}
-                            value={pap.sareePatti}
+                            name={`paper_details[${i}].saree_patti`}
+                            value={pap.saree_patti}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                           />
@@ -558,8 +575,8 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           <CommonTextField
                             type="text"
                             placeholder={t("design.netPaper")}
-                            name={`paper[${i}].netPaper`}
-                            value={pap.netPaper}
+                            name={`paper_details[${i}].net_paper`}
+                            value={pap.net_paper}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                           />
@@ -568,18 +585,18 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           )}
                         </div>
 
-                        {formik.values.paper.length > 1 && (
+                        {formik.values.paper_details.length > 1 && (
                           <div className="flex items-center justify-center h-10 w-10 p-0 rounded-lg bg-destructive cursor-pointer"
                             onClick={() => {
-                              const updated = formik.values.paper.filter((_, idx) => idx !== i);
-                              formik.setFieldValue("paper", updated);
+                              const updated = formik.values.paper_details.filter((_, idx) => idx !== i);
+                              formik.setFieldValue("paper_details", updated);
                             }}
                           >
                             <Trash2 className="text-white size-5" />
                           </div>
                         )}
                         <div className="col-span-3">
-                          {!pap?.image && (
+                          {!pap?.images && (
                             <>
                               <CommonButton
                                 as="span"
@@ -603,10 +620,10 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                             </>
                           )}
 
-                          {pap?.image && (
+                          {pap?.images && (
                             <div className="mt-4 relative group border rounded-md overflow-hidden w-fit mx-auto">
                               <img
-                                src={pap?.image}
+                                src={pap?.images}
                                 alt="Uploaded"
                                 className="w-40 h-40 object-cover rounded-md"
                               />
@@ -632,15 +649,15 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
 
                 {/* Stone */}
                 <div className="grid grid-cols-3 gap-3">
-                  {formik.values.stones.map((sto, i) => {
-                    const typeTouched = getIn(formik.touched, `stones[${i}].type`);
-                    const typeError = getIn(formik.errors, `stones[${i}].type`);
-                    const sizeTouched = getIn(formik.touched, `stones[${i}].size`);
-                    const sizeError = getIn(formik.errors, `stones[${i}].size`);
-                    const colorTouched = getIn(formik.touched, `stones[${i}].color`);
-                    const colorError = getIn(formik.errors, `stones[${i}].color`);
-                    const priceTouched = getIn(formik.touched, `stones[${i}].price`);
-                    const priceError = getIn(formik.errors, `stones[${i}].price`);
+                  {formik.values.stone_detail.map((sto, i) => {
+                    const typeTouched = getIn(formik.touched, `stone_detail[${i}].type`);
+                    const typeError = getIn(formik.errors, `stone_detail[${i}].type`);
+                    const sizeTouched = getIn(formik.touched, `stone_detail[${i}].size`);
+                    const sizeError = getIn(formik.errors, `stone_detail[${i}].size`);
+                    const colorTouched = getIn(formik.touched, `stone_detail[${i}].color`);
+                    const colorError = getIn(formik.errors, `stone_detail[${i}].color`);
+                    const priceTouched = getIn(formik.touched, `stone_detail[${i}].price`);
+                    const priceError = getIn(formik.errors, `stone_detail[${i}].price`);
 
                     return (
                       <>
@@ -652,8 +669,8 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                             type="button"
                             className="flex items-center justify-center p-0 w-10 h-10"
                             onClick={() =>
-                              formik.setFieldValue("stones", [
-                                ...formik.values.stones,
+                              formik.setFieldValue("stone_detail", [
+                                ...formik.values.stone_detail,
                                 { type: "", size: "", color: "", price: "" },
                               ])
                             }
@@ -666,7 +683,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           <CommonTextField
                             type="text"
                             placeholder={t("design.type")}
-                            name={`stones[${i}].type`}
+                            name={`stone_detail[${i}].type`}
                             value={sto.type}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
@@ -680,7 +697,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           <CommonTextField
                             type="text"
                             placeholder={t("design.size")}
-                            name={`stones[${i}].size`}
+                            name={`stone_detail[${i}].size`}
                             value={sto.size}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
@@ -694,7 +711,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           <CommonTextField
                             type="text"
                             placeholder={t("design.color")}
-                            name={`stones[${i}].color`}
+                            name={`stone_detail[${i}].color`}
                             value={sto.color}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
@@ -708,8 +725,8 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           <CommonTextField
                             type="text"
                             placeholder={t("design.price")}
-                            name={`stones[${i}].price`}
-                            value={sto.item}
+                            name={`stone_detail[${i}].price`}
+                            value={sto.price}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                           />
@@ -718,11 +735,11 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                           )}
                         </div>
 
-                        {formik.values.stones.length > 1 && (
+                        {formik.values.stone_detail.length > 1 && (
                           <div className="flex items-center justify-center h-10 w-10 p-0 rounded-lg bg-destructive cursor-pointer"
                             onClick={() => {
-                              const updated = formik.values.stones.filter((_, idx) => idx !== i);
-                              formik.setFieldValue("stones", updated);
+                              const updated = formik.values.stone_detail.filter((_, idx) => idx !== i);
+                              formik.setFieldValue("stone_detail", updated);
                             }}
                           >
                             <Trash2 className="text-white size-5" />
@@ -742,11 +759,11 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
             <Separator />
             {/* Labour */}
             <h5 className="h5-bold lg:text-lg">{t("design.labor")}</h5>
-            {formik.values.labours.map((lab, i) => {
-              const nameTouched = getIn(formik.touched, `labours[${i}].name`);
-              const nameError = getIn(formik.errors, `labours[${i}].name`);
-              const priceTouched = getIn(formik.touched, `labours[${i}].price`);
-              const priceError = getIn(formik.errors, `labours[${i}].price`);
+            {formik.values.labour.map((lab, i) => {
+              const nameTouched = getIn(formik.touched, `labour[${i}].name`);
+              const nameError = getIn(formik.errors, `labour[${i}].name`);
+              const priceTouched = getIn(formik.touched, `labour[${i}].price`);
+              const priceError = getIn(formik.errors, `labour[${i}].price`);
 
               return (
                 <div className="grid grid-cols-[auto,130px,40px] items-end gap-3">
@@ -755,7 +772,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                     <CommonTextField
                       type="text"
                       placeholder={t("users.name")}
-                      name={`labours[${i}].name`}
+                      name={`labour[${i}].name`}
                       value={lab.name}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
@@ -769,7 +786,7 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                     <CommonTextField
                       type="text"
                       placeholder={t("design.price")}
-                      name={`labours[${i}].price`}
+                      name={`labour[${i}].price`}
                       value={lab.price}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
@@ -778,11 +795,11 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                       <p className="text-red-500 text-sm mt-1">{priceError}</p>
                     )}
                   </div>
-                  {formik.values.labours.length > 1 ? (
+                  {formik.values.labour.length > 1 ? (
                     <div className="flex items-center justify-center h-10 w-10 p-0 rounded-lg bg-destructive cursor-pointer"
                       onClick={() => {
-                        const updated = formik.values.labours.filter((_, idx) => idx !== i);
-                        formik.setFieldValue("labours", updated);
+                        const updated = formik.values.labour.filter((_, idx) => idx !== i);
+                        formik.setFieldValue("labour", updated);
                       }}
                     >
                       <Trash2 className="text-white size-5" />
@@ -792,8 +809,8 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                       type="button"
                       className="flex items-center justify-center p-0 w-10 h-10"
                       onClick={() =>
-                        formik.setFieldValue("labours", [
-                          ...formik.values.labours,
+                        formik.setFieldValue("labour", [
+                          ...formik.values.labour,
                           { name: "", price: "" },
                         ])
                       }
@@ -804,13 +821,13 @@ const AddEditDesign = ({ isOpen, setIsOpen }) => {
                 </div>
               )
             })}
-            {formik.values.labours.length > 1 && (
+            {formik.values.labour.length > 1 && (
               <CommonButton
                 type="button"
                 className="flex items-center justify-center p-0 w-10 h-10"
                 onClick={() =>
-                  formik.setFieldValue("labours", [
-                    ...formik.values.labours,
+                  formik.setFieldValue("labour", [
+                    ...formik.values.labour,
                     { name: "", price: "" },
                   ])
                 }

@@ -2,7 +2,7 @@ import serverCall from "../serverCall";
 
 const addDesign = (payload) => {
     try {
-        const response = serverCall.post('/register', payload)
+        const response = serverCall.post('/design/add', payload)
         return response
     } catch (error) {
         throw error
@@ -10,15 +10,15 @@ const addDesign = (payload) => {
 }
 const updateDesign = (id, payload) => {
     try {
-        const response = serverCall.post(`/update-profile/${id}`, payload)
+        const response = serverCall.post(`/design/update/${id}`, payload)
         return response
     } catch (error) {
-        throw error 
+        throw error
     }
 }
 const deleteDesign = (id) => {
     try {
-        const response = serverCall.delete(`all-users/delete/${id}`)
+        const response = serverCall.delete(`/design/delete/${id}`)
         return response
     } catch (error) {
         throw error
@@ -33,15 +33,15 @@ const getDesignList = (page, limit, search) => {
     }
 
     try {
-        const response = serverCall.post('/all-users', payload)
+        const response = serverCall.post('/design/all', payload)
         return response
     } catch (error) {
         throw error
     }
 }
 
-const userService = {
+const designService = {
     getDesignList, addDesign, updateDesign, deleteDesign
 }
 
-export default userService
+export default designService
