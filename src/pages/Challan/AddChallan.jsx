@@ -108,53 +108,33 @@ const AddChallan = ({ type, open, setClose }) => {
 
             <div className="max-sm:space-y-4 sm:grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label>{t("design.date")}</Label>
-                <DatePiker />
-              </div>
-              <div className="grid gap-2">
-                <Label>{t("design.designNo")}</Label>
-                <CommonTextField
-                  type="number"
-                  placeholder={t("design.designNo")}
-                />
-              </div>
-              <div className="grid gap-2">
                 <Label>{t("challan.jobNo")}</Label>
                 <CommonTextField
                   type="number"
                   placeholder={t("challan.jobNo")}
                 />
               </div>
+              {type == "out" ? (
+                <div className="grid gap-2">
+                  <Label>{t("design.designNo")}</Label>
+                  <CommonTextField
+                    type="number"
+                    placeholder={t("design.designNo")}
+                  />
+                </div>
+              ) : (
+                <></>
+              )}
+              <div className="grid gap-2">
+                <Label>{t("design.date")}</Label>
+                <DatePiker />
+              </div>
+
               <div className="grid gap-2">
                 <Label>{t("challan.challanNo")}</Label>
                 <CommonTextField
                   type="number"
                   placeholder={t("challan.challanNo")}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label>{t("challan.totalMall")}</Label>
-                <RadioGroup
-                  defaultValue="comfortable"
-                  className="border border-border rounded-md h-10 grid grid-cols-2 gap-3 px-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <RadioGroupItem value="default" id="m1" />
-                    <Label htmlFor="m1">{t("challan.piece")}</Label>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <RadioGroupItem value="comfortable" id="m2" />
-                    <Label htmlFor="m2">{t("challan.meter")}</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-              <div className="grid gap-2">
-                <Label className="text-transparent">
-                  {t("challan.challanNo")}
-                </Label>
-                <CommonTextField
-                  type="number"
-                  placeholder={t("challan.totalMall")}
                 />
               </div>
               <div className="grid gap-2">
@@ -174,34 +154,64 @@ const AddChallan = ({ type, open, setClose }) => {
                 </RadioGroup>
               </div>
               {type == "out" ? (
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="grid gap-2">
-                      <Label>{t("challan.finished")}</Label>
-                      <CommonTextField
-                        type="number"
-                        placeholder={t("challan.finished")}
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label>{t("challan.plain")}</Label>
-                      <CommonTextField
-                        type="number"
-                        placeholder={t("challan.plain")}
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label>{t("challan.reject")}</Label>
-                      <CommonTextField
-                        type="number"
-                        placeholder={t("challan.reject")}
-                      />
-                    </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="grid gap-2">
+                    <Label>{t("challan.finished")}</Label>
+                    <CommonTextField
+                      type="number"
+                      placeholder={t("challan.finished")}
+                    />
                   </div>
-                ):(<></>)}
+                  <div className="grid gap-2">
+                    <Label>{t("challan.plain")}</Label>
+                    <CommonTextField
+                      type="number"
+                      placeholder={t("challan.plain")}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>{t("challan.reject")}</Label>
+                    <CommonTextField
+                      type="number"
+                      placeholder={t("challan.reject")}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
               <div className="grid gap-2">
-                <Label>{t("selectCompanyPlaceholder")}</Label>
+                <Label>{t("challan.totalMall")}</Label>
+                <RadioGroup
+                  defaultValue="comfortable"
+                  className="border border-border rounded-md h-10 grid grid-cols-2 gap-3 px-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <RadioGroupItem value="default" id="m1" />
+                    <Label htmlFor="m1">{t("challan.piece")}</Label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <RadioGroupItem value="comfortable" id="m2" />
+                    <Label htmlFor="m2">{t("challan.meter")}</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              
+              <div className="grid gap-2">
+                <Label className="text-transparent">
+                  {t("challan.challanNo")}
+                </Label>
+                <CommonTextField
+                  type="number"
+                  placeholder={t("challan.totalMall")}
+                />
+              </div>
+              
+              
+              <div className="grid gap-2">
+                <Label>{t("design.selectPartyName")}</Label>
                 <div className="grid grid-cols-[auto,40px] gap-2">
-                  <CommonBox placeholders={t("selectCompanyPlaceholder")} />
+                  <CommonBox placeholders={t("design.selectPartyName")} />
                   <CommonButton
                     type="button"
                     className="flex items-center justify-center p-0 w-10 h-10"
@@ -211,9 +221,9 @@ const AddChallan = ({ type, open, setClose }) => {
                 </div>
               </div>
               <div className="grid gap-2">
-                <Label>{t("selectIteamPlaceholder")}</Label>
+                <Label>{t("challan.selectIteamCategory")}</Label>
                 <div className="grid grid-cols-[auto,40px] gap-2">
-                  <CommonBox placeholders={t("selectIteamPlaceholder")} />
+                  <CommonBox placeholders={t("challan.selectIteamCategory")} />
                   <CommonButton
                     type="button"
                     className="flex items-center justify-center p-0 w-10 h-10"
