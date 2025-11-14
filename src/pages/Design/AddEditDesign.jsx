@@ -31,7 +31,6 @@ const AddEditDesign = ({ selectedData, isOpen, setIsOpen }) => {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const IMG_URL = config.baseImage;
   const { data } = useSelector(state => state?.dropdown)
-  console.log("selectedData", selectedData);
 
   const isEdit = !!selectedData
 

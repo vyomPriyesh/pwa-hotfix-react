@@ -9,10 +9,14 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import masterService from "../../service/master.service";
 import { Toaster } from "../../components/ui/toaster";
+import { fetchAllDropdown } from "../../store/slice/dropdown";
+import { useDispatch } from "react-redux";
 
 const AddEditParty = ({ user, isOpen, setIsOpen, selectedData = "" }) => {
   const { t } = useTranslation("common");
   const isEdit = !!selectedData
+
+  const dispatch = useDispatch();
 
   const initialValues = {
     name: selectedData?.name || "",
@@ -66,6 +70,7 @@ const AddEditParty = ({ user, isOpen, setIsOpen, selectedData = "" }) => {
         await masterService.updateParty(selectedData?._id, payload)
       } else {
         await masterService.addParty(payload)
+        dispatch(fetchAllDropdown());
       }
 
       resetForm();

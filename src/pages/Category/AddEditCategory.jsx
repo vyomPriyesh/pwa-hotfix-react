@@ -8,10 +8,14 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import masterService from "../../service/master.service";
 import { Toaster } from "../../components/ui/toaster";
+import { useDispatch } from "react-redux";
+import { fetchAllDropdown } from "../../store/slice/dropdown";
 
 const AddEditCategory = ({ user, isOpen, setIsOpen, selectedData = '' }) => {
   const { t } = useTranslation("common");
   const isEdit = !!selectedData
+
+  const dispatch = useDispatch();
 
   const initialValues = {
     name: selectedData?.name || "",
@@ -39,6 +43,7 @@ const AddEditCategory = ({ user, isOpen, setIsOpen, selectedData = '' }) => {
         await masterService.updateCategory(selectedData?._id, payload)
       } else {
         await masterService.addCategory(payload)
+        dispatch(fetchAllDropdown());
       }
 
       resetForm();
