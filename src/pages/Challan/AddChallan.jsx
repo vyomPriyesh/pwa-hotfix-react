@@ -13,10 +13,8 @@ import CommonBox from "../../components/common/common_box";
 import { Textarea } from "../../components/ui/textarea";
 
 const AddChallan = ({ type, open, setClose }) => {
-
   const { t } = useTranslation("common");
   const [imageDialog, setImageDialog] = useState(false);
-
 
   // 🔹 Handle cancel
   const handleCancel = () => {
@@ -63,7 +61,7 @@ const AddChallan = ({ type, open, setClose }) => {
         isOpen={open}
         onClose={handleCancel}
         size="lg"
-        title={type == 'in' ? <>{t("challan.in")}</> : <>{t("challan.out")}</>}
+        title={type == "in" ? <>{t("challan.in")}</> : <>{t("challan.out")}</>}
         footer={
           <div className="flex gap-2">
             <CommonButton
@@ -108,10 +106,17 @@ const AddChallan = ({ type, open, setClose }) => {
               className="hidden"
             />
 
-            <div className="grid sm:grid-cols-2 gap-2 md:gap-4">
+            <div className="max-sm:space-y-4 sm:grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>{t("design.date")}</Label>
                 <DatePiker />
+              </div>
+              <div className="grid gap-2">
+                <Label>{t("design.designNo")}</Label>
+                <CommonTextField
+                  type="number"
+                  placeholder={t("design.designNo")}
+                />
               </div>
               <div className="grid gap-2">
                 <Label>{t("challan.jobNo")}</Label>
@@ -119,22 +124,6 @@ const AddChallan = ({ type, open, setClose }) => {
                   type="number"
                   placeholder={t("challan.jobNo")}
                 />
-              </div>
-              <div className="grid gap-2">
-                <Label>{t("challan.mall")}</Label>
-                <RadioGroup
-                  defaultValue="comfortable"
-                  className="border border-border rounded-md h-10 grid grid-cols-2 gap-3 px-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <RadioGroupItem value="default" id="r1" />
-                    <Label htmlFor="r1">{t("challan.regular")}</Label>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <RadioGroupItem value="comfortable" id="r2" />
-                    <Label htmlFor="r2">{t("challan.rf")}</Label>
-                  </div>
-                </RadioGroup>
               </div>
               <div className="grid gap-2">
                 <Label>{t("challan.challanNo")}</Label>
@@ -168,7 +157,48 @@ const AddChallan = ({ type, open, setClose }) => {
                   placeholder={t("challan.totalMall")}
                 />
               </div>
-              <div className="grid gap-2 col-span-2">
+              <div className="grid gap-2">
+                <Label>{t("challan.mall")}</Label>
+                <RadioGroup
+                  defaultValue="comfortable"
+                  className="border border-border rounded-md h-10 grid grid-cols-2 gap-3 px-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <RadioGroupItem value="default" id="r1" />
+                    <Label htmlFor="r1">{t("challan.regular")}</Label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <RadioGroupItem value="comfortable" id="r2" />
+                    <Label htmlFor="r2">{t("challan.rf")}</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              {type == "out" ? (
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="grid gap-2">
+                      <Label>{t("challan.finished")}</Label>
+                      <CommonTextField
+                        type="number"
+                        placeholder={t("challan.finished")}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label>{t("challan.plain")}</Label>
+                      <CommonTextField
+                        type="number"
+                        placeholder={t("challan.plain")}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label>{t("challan.reject")}</Label>
+                      <CommonTextField
+                        type="number"
+                        placeholder={t("challan.reject")}
+                      />
+                    </div>
+                  </div>
+                ):(<></>)}
+              <div className="grid gap-2">
                 <Label>{t("selectCompanyPlaceholder")}</Label>
                 <div className="grid grid-cols-[auto,40px] gap-2">
                   <CommonBox placeholders={t("selectCompanyPlaceholder")} />
