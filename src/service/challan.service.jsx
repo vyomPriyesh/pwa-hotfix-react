@@ -33,6 +33,15 @@ const handleGetJobNumber = () => {
     }
 }
 
+const addChallan = (payload) => {
+    try {
+        const response = serverCall.post(`/challan/add`, payload)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 const handleSingleChallan = (id) => {
     try {
         const response = serverCall.get(`/challan/single/${id}`)
@@ -43,7 +52,7 @@ const handleSingleChallan = (id) => {
 }
 
 const challanservice = {
-    getAllChallan, allIN, handleGetJobNumber, handleSingleChallan
+    getAllChallan, allIN, handleGetJobNumber, handleSingleChallan, addChallan
 }
 
 export default challanservice

@@ -25,7 +25,7 @@ function isValidDate(date) {
   return !isNaN(date.getTime());
 }
 
-const DatePiker = ({ onChange }) => {
+const DatePiker = ({ onChange, disabled }) => {
 
   const today = new Date();
 
@@ -39,6 +39,7 @@ const DatePiker = ({ onChange }) => {
       <div className="relative flex gap-2">
         <Input
           id="date"
+          disabled={disabled}
           value={value}
           placeholder="June 01, 2025"
           className="bg-background pr-10"
@@ -64,6 +65,7 @@ const DatePiker = ({ onChange }) => {
             <Button
               id="date-picker"
               variant="ghost"
+              disabled={disabled}
               className="absolute top-1/2 right-2 size-6 -translate-y-1/2 !p-0"
             >
               <FaCalendarAlt className="size-4 !text-primary/70" />

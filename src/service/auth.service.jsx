@@ -16,6 +16,17 @@ const login = async (body) => {
   }
 };
 
+const imageUploadwithurl = async (payload) => {
+
+  try {
+    const response = serverCall.post(`/images/upload`, payload)
+    return response
+  } catch (error) {
+    throw error
+  }
+
+}
+
 const imageUpload = async (payload) => {
   try {
     const response = serverCall.post(`/images/upload`, payload)
@@ -39,7 +50,7 @@ const setDataToLocal = (data) => {
 };
 
 const AuthService = {
-  login,imageUpload
+  login, imageUpload, imageUploadwithurl
 };
 
 export default AuthService;

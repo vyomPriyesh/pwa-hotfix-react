@@ -8,6 +8,8 @@ import AddChallan from "./AddChallan";
 import InOutDialog from "./InOutDialog";
 import challanservice from "../../service/challan.service";
 import dateformate from "../../components/widgets/dateformate";
+import config from "../../config";
+import CommonPagination from "../../components/widgets/common_pagination";
 
 const imagePlaceholder =
   "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=";
@@ -23,21 +25,33 @@ const Challan = () => {
   const [size, setSize] = useState(10)
   const [addEdit, setAddEdit] = useState(false)
   const [type, setType] = useState(null)
+  const IMG_URL = config.baseImage;
+  const [pagination, setPagination] = useState({
+    total: 0,
+    totalPages: 0,
+  });
 
-  const fetchAllINChallan = async () => {
+  const fetchAllINChallan = async (page, size, search) => {
     const response = await challanservice.getAllChallan(page, size, search)
     if (response) {
       setAllData(response.data.data.data)
+      setPagination(response.data.data.pagination)
     }
   }
 
   useEffect(() => {
-    fetchAllINChallan()
-  }, [])
+    fetchAllINChallan(page, size, search)
+  }, [page, size, search])
 
   const handleCloseINout = (type) => {
     setType(type)
     setAddEdit(true)
+  }
+
+  const handleAllSubmit = () => {
+    setIsOpen(false)
+    fetchAllINChallan(page, size, search)
+    setAddEdit(false)
   }
 
   return (
@@ -78,7 +92,7 @@ const Challan = () => {
               >
                 <div className="h-24 lg:h-32 overflow-hidden w-full">
                   <img
-                    src={(item?.in_id ? item?.in_id?.challan_image : item?.challan_image) || imagePlaceholder}
+                    src={IMG_URL + (item?.in_id ? item?.in_id?.challan_image : item?.challan_image) || imagePlaceholder}
                     alt="User"
                     className="h-full w-full object-cover"
                   />
@@ -136,8 +150,20 @@ const Challan = () => {
           )}
         </div>
       </Card>
+      <div className="flex items-center justify-between max-md:flex-col gap-4">
+
+        <CommonPagination
+          currentPage={page}
+          totalPages={pagination?.totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
+          pageSize={size}
+          // onPageSizeChange={handleDataSize}
+          className=""
+        />
+
+      </div>
       <InOutDialog open={isOpen} setClose={() => setIsOpen(false)} onSubmit={handleCloseINout} />
-      <AddChallan open={addEdit} setClose={() => setAddEdit(false)} type={type} />
+      <AddChallan open={addEdit} setClose={() => setAddEdit(false)} type={type} onSubmit={handleAllSubmit} />
     </div>
   );
 };

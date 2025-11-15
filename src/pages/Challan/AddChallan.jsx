@@ -14,8 +14,10 @@ import challanservice from "../../service/challan.service";
 import CommonDropdown from "../../components/widgets/common_dropdown";
 import CommonImgupload from "../../components/widgets/common_imgupload";
 import { useSelector } from "react-redux";
+import AuthService from "../../service/auth.service";
+import config from "../../config";
 
-const AddChallan = ({ type, open, setClose }) => {
+const AddChallan = ({ type, open, onSubmit, setClose }) => {
 
   const { t } = useTranslation("common");
   const { data, loading, error } = useSelector(state => state.dropdown)
@@ -26,6 +28,7 @@ const AddChallan = ({ type, open, setClose }) => {
     mall_type: 'comfortable'
   })
   const [errors, setErrors] = useState({})
+  const IMG_URL = config.baseImage;
 
   const fetchAllIN = async () => {
     const response = await challanservice.allIN()
@@ -57,7 +60,12 @@ const AddChallan = ({ type, open, setClose }) => {
     const response = await challanservice.handleSingleChallan(formData?.in_id)
     if (response) {
       const inData = response.data.data
-      setFormData(prev => ({ ...prev, ...inData }))
+      setFormData(prev => ({
+        ...prev,
+        ...inData,
+        mall_image_value: IMG_URL + inData?.mall_image,
+        challan_image_value: IMG_URL + inData?.challan_image,
+      }))
     }
   }
 
@@ -67,20 +75,81 @@ const AddChallan = ({ type, open, setClose }) => {
     }
   }, [formData?.in_id])
 
-  const handleChange = (name, e) => {
-    setFormData(prev => ({ ...prev, [name]: e }))
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: null }))
+  };
+
+  const handleImage = async (e, key) => {
+    const file = e.target.files[0];
+    const formData = new FormData()
+    formData.append("images", file)
+    const res = await AuthService.imageUploadwithurl(formData)
+    setFormData(prev => ({ ...prev, [key + '_value']: IMG_URL + res.data.data[0], [key]: res.data.data[0] }))
   }
 
-
-  // 🔹 Handle cancel
-  const handleCancel = () => {
-    setClose();
-  };
-
   // 🔹 Handle submit
-  const handleSubmit = () => {
-    setClose();
+  const handleSubmit = async () => {
+    let newErrors = {};
+    if (!formData?.mall_image) {
+      newErrors.mall_image = 'Mall Image is Required'
+    }
+    if (!formData?.challan_image) {
+      newErrors.challan_image = 'Challan Image is Required'
+    }
+    if (!formData?.challan_no) {
+      newErrors.challan_no = 'Challan Number is Required'
+    }
+    if (!formData?.total_mall_amount) {
+      newErrors.total_mall_amount = 'Total Mall Amount is Required'
+    }
+    if (!formData?.category) {
+      newErrors.category = 'Category is Required'
+    }
+    if (!formData?.party) {
+      newErrors.party = 'Party is Required'
+    }
+    if (!formData?.carrier_person) {
+      newErrors.carrier_person = 'Carrier Person is Required'
+    }
+    if (type == 'out') {
+      if (formData?.finished == null) {
+        newErrors.finished = 'Finished is Required';
+      }
+      if (formData?.plain == null) {
+        newErrors.plain = 'Plain is Required';
+      }
+      if (formData?.rejected == null) {
+        newErrors.rejected = 'Rejected is Required';
+      }
+      if ((Number(formData?.finished) + Number(formData?.plain) + Number(formData?.rejected)) > formData.pending) {
+        alert("Total of Three Mall type more then previous pending Total Mall")
+        return
+      }
+    }
+    setErrors(newErrors)
+    if (Object.keys(newErrors).length === 0) {
+      setErrors({})
+      formData.type = type
+      if (type == 'out') {
+        formData.pending = Number(formData.pending) - (Number(formData?.finished) + Number(formData?.plain) + Number(formData?.rejected))
+      } else {
+        formData.pending = formData.total_mall_amount
+      }
+      const res = await challanservice.addChallan(formData)
+      if (res.data.success) {
+        onSubmit()
+      }
+    }
   };
+
+  const handleCancel = () => {
+    setClose()
+  }
+
+  console.log(errors)
 
   // Image Dialog
   const ImageDialogs = () => {
@@ -141,14 +210,50 @@ const AddChallan = ({ type, open, setClose }) => {
                   <div className="w-fit grid gap-2">
                     <h3 className="text-center">{t("challan.mallImage")}</h3>
                     <div className="h-36 w-32 p-2 shadow-inners rounded-md flex items-center justify-center cursor-pointer">
-                      <CommonImgupload value={formData?.mall_image} onChange={(e) => handleChange('mall_image', e)} className='h-full w-full' />
+                      <Label
+                        htmlFor="mall_image"
+                      >
+                        {formData?.mall_image_value ?
+                          <img
+                            src={formData?.mall_image_value}
+                            className="w-full h-full object-cover bg-center"
+                          />
+                          :
+                          <ImageUp className="md:size-[36px] opacity-50" />}
+                      </Label>
+                      <Input
+                        type="file"
+                        id="mall_image"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImage(e, 'mall_image')}
+                      />
                     </div>
+                    {errors?.mall_image && <p className="text-red-500">{errors?.mall_image}</p>}
                   </div>
                   <div className="w-fit grid gap-2">
                     <h3 className="text-center">{t("challan.challanImage")}</h3>
                     <div className="h-36 w-32 p-2 shadow-inners rounded-md flex items-center justify-center cursor-pointer">
-                      <CommonImgupload value={formData?.challan_image} onChange={(e) => handleChange('challan_image', e)} className='h-full w-full' />
+                      <Label
+                        htmlFor="challan_image"
+                      >
+                        {formData?.challan_image_value ?
+                          <img
+                            src={formData?.challan_image_value}
+                            className="w-full h-full object-cover bg-center"
+                          />
+                          :
+                          <ImageUp className="md:size-[36px] opacity-50" />}
+                      </Label>
+                      <Input
+                        type="file"
+                        id="challan_image"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImage(e, 'challan_image')}
+                      />
                     </div>
+                    {errors?.challan_image && <p className="text-red-500">{errors?.challan_image}</p>}
                   </div>
                 </div>
               </div>
@@ -171,7 +276,7 @@ const AddChallan = ({ type, open, setClose }) => {
                     placeholder={t("challan.jobNo")}
                   />
                   :
-                  <CommonDropdown placeholder={t("challan.jobNo")} value={formData?.in_id} options={allIN} onSelect={(in_id) => handleChange('in_id', in_id)} />
+                  <CommonDropdown placeholder={t("challan.jobNo")} value={formData?.in_id} options={allIN} onSelect={(in_id) => setFormData((p) => ({ ...p, in_id }))} />
                 }
               </div>
               {type == "out" ? (
@@ -179,7 +284,8 @@ const AddChallan = ({ type, open, setClose }) => {
                   <Label>{t("design.designNo")}</Label>
                   <CommonTextField
                     type="number"
-                    onChange={(e) => handleChange('design_number', e.target.value)}
+                    name='design_number'
+                    onChange={handleChange}
                     placeholder={t("design.designNo")}
                   />
                 </div>
@@ -188,21 +294,23 @@ const AddChallan = ({ type, open, setClose }) => {
               )}
               <div className="grid gap-2">
                 <Label>{t("design.date")}</Label>
-                <DatePiker />
+                <DatePiker disabled={true} />
               </div>
 
               <div className="grid gap-2">
                 <Label>{t("challan.challanNo")}</Label>
                 <CommonTextField
                   type="text"
+                  name='challan_no'
                   value={formData?.challan_no}
-                  onChange={(e) => handleChange('challan_no', e.target.value)}
+                  onChange={handleChange}
                   placeholder={t("challan.challanNo")}
+                  error={errors?.challan_no}
                 />
               </div>
               <div className="grid gap-2">
                 <Label>{t("challan.mall")}</Label>
-                <RadioGroup value={formData?.mall_type} onValueChange={(e) => handleChange('mall_type', e)}
+                <RadioGroup value={formData?.mall_type} onValueChange={(mall_type) => setFormData((p) => ({ ...p, mall_type }))}
                   defaultValue="comfortable"
                   className="border border-border rounded-md h-10 grid grid-cols-2 gap-3 px-3"
                 >
@@ -222,21 +330,30 @@ const AddChallan = ({ type, open, setClose }) => {
                     <Label>{t("challan.finished")}</Label>
                     <CommonTextField
                       type="number"
+                      name='finished'
+                      onChange={handleChange}
                       placeholder={t("challan.finished")}
+                      error={errors?.finished}
                     />
                   </div>
                   <div className="grid gap-2">
                     <Label>{t("challan.plain")}</Label>
                     <CommonTextField
                       type="number"
+                      name='plain'
+                      onChange={handleChange}
                       placeholder={t("challan.plain")}
+                      error={errors?.plain}
                     />
                   </div>
                   <div className="grid gap-2">
                     <Label>{t("challan.reject")}</Label>
                     <CommonTextField
                       type="number"
+                      name='rejected'
+                      onChange={handleChange}
                       placeholder={t("challan.reject")}
+                      error={errors?.rejected}
                     />
                   </div>
                 </div>
@@ -245,7 +362,7 @@ const AddChallan = ({ type, open, setClose }) => {
               )}
               <div className="grid gap-2">
                 <Label>{t("challan.totalMall")}</Label>
-                <RadioGroup value={formData?.total_mall} onValueChange={(e) => handleChange('total_mall', e)}
+                <RadioGroup value={formData?.total_mall} onValueChange={(total_mall) => setFormData((p) => ({ ...p, total_mall }))}
                   defaultValue="meter"
                   className="border border-border rounded-md h-10 grid grid-cols-2 gap-3 px-3"
                 >
@@ -266,9 +383,11 @@ const AddChallan = ({ type, open, setClose }) => {
                 </Label>
                 <CommonTextField
                   type="text"
+                  name='total_mall_amount'
                   value={formData?.total_mall_amount}
-                  onChange={(e) => handleChange('total_mall_amount', e.target.value)}
+                  onChange={handleChange}
                   placeholder={t("challan.totalMall")}
+                  error={errors?.total_mall_amount}
                 />
               </div>
 
@@ -276,7 +395,14 @@ const AddChallan = ({ type, open, setClose }) => {
               <div className="grid gap-2">
                 <Label>{t("design.selectPartyName")}</Label>
                 <div className="grid grid-cols-[auto,40px] gap-2">
-                  <CommonDropdown placeholder={t("design.selectPartyName")} error={errors?.party} options={data?.data?.parties} onSelect={(party) => handleChange('party', party)} value={formData?.party} />
+                  <CommonDropdown
+                    placeholder={t("design.selectPartyName")}
+                    error={errors?.party}
+                    options={data?.data?.parties}
+                    onSelect={(party) => setFormData((p) => ({ ...p, party }))}
+                    value={formData?.party}
+
+                  />
                   <CommonButton
                     type="button"
                     className="flex items-center justify-center p-0 w-10 h-10"
@@ -288,7 +414,13 @@ const AddChallan = ({ type, open, setClose }) => {
               <div className="grid gap-2">
                 <Label>{t("challan.selectIteamCategory")}</Label>
                 <div className="grid grid-cols-[auto,40px] gap-2">
-                  <CommonDropdown placeholder={t("challan.selectIteamCategory")} error={errors?.category} options={data?.data?.categories} onSelect={(category) => handleChange('category', category)} value={formData?.category} />
+                  <CommonDropdown
+                    placeholder={t("challan.selectIteamCategory")}
+                    error={errors?.category}
+                    options={data?.data?.categories}
+                    onSelect={(category) => setFormData((p) => ({ ...p, category }))}
+                    value={formData?.category}
+                  />
                   <CommonButton
                     type="button"
                     className="flex items-center justify-center p-0 w-10 h-10"
@@ -300,7 +432,13 @@ const AddChallan = ({ type, open, setClose }) => {
               <div className="grid gap-2">
                 <Label>{t("challan.carrierPerson")}</Label>
                 <div className="grid grid-cols-[auto,40px] gap-2">
-                  <CommonDropdown placeholder={t("selectCarrierPlaceholder")} error={errors?.carrier_person} options={data?.data?.users} onSelect={(carrier_person) => handleChange('carrier_person', carrier_person)} value={formData?.carrier_person} />
+                  <CommonDropdown
+                    placeholder={t("selectCarrierPlaceholder")}
+                    error={errors?.carrier_person}
+                    options={data?.data?.users}
+                    onSelect={(carrier_person) => setFormData((p) => ({ ...p, carrier_person }))}
+                    value={formData?.carrier_person}
+                  />
                   <CommonButton
                     type="button"
                     className="flex items-center justify-center p-0 w-10 h-10"
@@ -312,8 +450,9 @@ const AddChallan = ({ type, open, setClose }) => {
               <div className="grid gap-2 col-span-2">
                 <Label>{t("design.notes")}</Label>
                 <Textarea
+                  name='notes'
                   value={formData?.notes}
-                  onChange={(e) => handleChange('notes', e.target.value)}
+                  onChange={handleChange}
                   type="text" placeholder={t("design.notes")} />
               </div>
             </div>
