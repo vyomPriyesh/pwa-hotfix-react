@@ -305,8 +305,9 @@ const AddChallan = ({ type, open, onSubmit, setClose }) => {
                   value={formData?.challan_no}
                   onChange={handleChange}
                   placeholder={t("challan.challanNo")}
-                  error={errors?.challan_no}
+                  // error={errors?.challan_no}
                 />
+                {errors?.challan_no && <p className="text-red-500 text-sm">{errors?.challan_no}</p>}
               </div>
               <div className="grid gap-2">
                 <Label>{t("challan.mall")}</Label>
@@ -333,8 +334,9 @@ const AddChallan = ({ type, open, onSubmit, setClose }) => {
                       name='finished'
                       onChange={handleChange}
                       placeholder={t("challan.finished")}
-                      error={errors?.finished}
+                      // error={errors?.finished}
                     />
+                    {errors?.finished && <p className="text-red-500 text-sm">{errors?.finished}</p>}
                   </div>
                   <div className="grid gap-2">
                     <Label>{t("challan.plain")}</Label>
@@ -343,8 +345,9 @@ const AddChallan = ({ type, open, onSubmit, setClose }) => {
                       name='plain'
                       onChange={handleChange}
                       placeholder={t("challan.plain")}
-                      error={errors?.plain}
+                      // error={errors?.plain}
                     />
+                    {errors?.plain && <p className="text-red-500 text-sm">{errors?.plain}</p>}
                   </div>
                   <div className="grid gap-2">
                     <Label>{t("challan.reject")}</Label>
@@ -353,8 +356,9 @@ const AddChallan = ({ type, open, onSubmit, setClose }) => {
                       name='rejected'
                       onChange={handleChange}
                       placeholder={t("challan.reject")}
-                      error={errors?.rejected}
+                      // error={errors?.rejected}
                     />
+                    {errors?.rejected && <p className="text-red-500 text-sm">{errors?.rejected}</p>}
                   </div>
                 </div>
               ) : (
@@ -387,8 +391,9 @@ const AddChallan = ({ type, open, onSubmit, setClose }) => {
                   value={formData?.total_mall_amount}
                   onChange={handleChange}
                   placeholder={t("challan.totalMall")}
-                  error={errors?.total_mall_amount}
+                  // error={errors?.total_mall_amount}
                 />
+                {errors?.total_mall_amount && <p className="text-red-500 text-sm">{errors?.total_mall_amount}</p>}
               </div>
 
 
